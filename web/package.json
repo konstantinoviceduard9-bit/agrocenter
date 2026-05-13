@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preview:public": "vite preview --host 0.0.0.0 --port 4173"
+    "preview:public": "vite preview --host 0.0.0.0 --port 4173",
+    "demo:share": "node ./scripts/share-demo.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",
@@ -26,6 +27,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "localtunnel": "^2.0.2",
     "tailwindcss": "^4.3.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
