@@ -98,8 +98,10 @@ git config --global user.name "Your Name"
 ## Netlify (`*.netlify.app`)
 
 1. [app.netlify.com](https://app.netlify.com) → **Add new site** → Import from Git.
-2. Base directory: **`web`**.
-3. Build: `npm run build`, Publish: **`dist`** (дублируется в `netlify.toml`).
+2. Если репозиторий **монолит** (в корне есть и `web/`, и `docs/`), в корне лежит **`netlify.toml`** с `base = "web"` — **в панели Netlify поле Base directory оставьте пустым** (или не трогайте), чтобы подтянулся корневой конфиг. Иначе в прод может уехать весь репозиторий вместо собранного `dist`.
+3. Альтернатива: вручную **Base directory** = `web`, **Publish directory** = `dist`.
+
+Build: `npm run build`, Publish: **`dist`** (относительно `web/`).
 
 ---
 

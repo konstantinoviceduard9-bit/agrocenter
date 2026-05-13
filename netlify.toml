@@ -1,0 +1,12 @@
+# Netlify: репозиторий монолит — собираем и публикуем только Vite-приложение из web/
+# Иначе в прод попадёт корень репо (docs, obsidian, папка web как файлы), а не дашборд.
+
+[build]
+  base = "web"
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
