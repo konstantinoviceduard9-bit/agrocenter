@@ -121,11 +121,16 @@ Build: `npm run build`, Publish: **`dist`** (относительно `web/`).
 Для текущего репозитория **`agrocenter`**:  
 **https://konstantinoviceduard9-bit.github.io/agrocenter/**
 
-### Один раз в настройках GitHub
+### Ограничение: приватный репозиторий
 
-1. Репозиторий → **Settings** → **Pages** (в левом меню).
-2. **Build and deployment** → **Source** → выберите **GitHub Actions** (не «Deploy from a branch»).
-3. Сохраните. Дождитесь зелёного workflow **Deploy GitHub Pages** на вкладке **Actions** после следующего push в `main`.
+На **бесплатном** плане GitHub **Pages для private-репо не даёт** (нужен публичный репозиторий или платный план / Enterprise). Если репозиторий **`agrocenter`** остаётся **Private**, этот способ не включится.
+
+**Варианты:**
+
+1. **Сделать репозиторий Public** (Settings → General → Danger zone → Change repository visibility) — тогда включите **Pages → Source: GitHub Actions** как ниже. Перед этим проверьте, что в репо **нет** того, что нельзя светить (или удалите/вынесите чувствительные папки, например `docs/neral-vault/`).
+2. **Оставить Private** — используйте **Netlify** или **Cloudflare Pages** (бесплатный тариф, private GitHub поддерживается). У вас уже настроен корневой `netlify.toml` с `base = "web"`.
+
+### Если репозиторий публичный — один раз в настройках
 
 Файл workflow: `.github/workflows/deploy-github-pages.yml` — собирает `web/` с `VITE_BASE_PATH=/agrocenter/` и выкладывает `dist`. Копия `index.html` → `404.html` нужна, чтобы при обновлении страницы на вложенных маршрутах открывалось SPA.
 
