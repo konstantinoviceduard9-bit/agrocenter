@@ -38,7 +38,7 @@ type Ctx = {
 
 const DashboardDataContext = createContext<Ctx | null>(null)
 
-const SNAPSHOT_URL = '/data/dashboard.snapshot.json'
+const SNAPSHOT_URL = `${import.meta.env.BASE_URL}data/dashboard.snapshot.json`
 
 export function DashboardDataProvider({ children }: { children: ReactNode }) {
   const [companies, setCompanies] = useState<Company[]>(() => builtinCompanies.map((c) => ({ ...c })))

@@ -52,3 +52,8 @@ npm run demo:share
 Иногда при первом заходе localtunnel показывает страницу с кнопкой **Continue** — это нормально.
 
 Требуется выход в интернет; файлы проекта остаются локально, в облако ничего не загружается.
+
+## Статический хостинг GitHub Pages (бесплатный `github.io`)
+
+Постоянная ссылка без Netlify: после включения **Pages → GitHub Actions** в настройках репозитория адрес будет  
+`https://konstantinoviceduard9-bit.github.io/agrocenter/` (см. `docs/deploy-dashboard-preview.md`).

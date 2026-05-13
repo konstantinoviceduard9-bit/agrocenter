@@ -12,9 +12,12 @@ import { CreditorsPage } from './pages/CreditorsPage'
 import { AlertsPage } from './pages/AlertsPage'
 import { AdminSettingsPage } from './pages/AdminSettingsPage'
 
+const routerBasename =
+  import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '')
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <AuthProvider>
         <DashboardFiltersProvider>
           <DashboardDataProvider>

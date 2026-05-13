@@ -112,9 +112,24 @@ Build: `npm run build`, Publish: **`dist`** (относительно `web/`).
 
 ---
 
-## GitHub Pages
+## GitHub Pages (бесплатный адрес `*.github.io`)
 
-Нужен `base` в Vite вида `/имя-репозитория/` и отдельная настройка — для быстрого демо проще **Vercel / Netlify / Cloudflare**.
+После настройки сайт будет по адресу:
+
+`https://<ваш-логин-github>.github.io/<имя-репозитория>/`
+
+Для текущего репозитория **`agrocenter`**:  
+**https://konstantinoviceduard9-bit.github.io/agrocenter/**
+
+### Один раз в настройках GitHub
+
+1. Репозиторий → **Settings** → **Pages** (в левом меню).
+2. **Build and deployment** → **Source** → выберите **GitHub Actions** (не «Deploy from a branch»).
+3. Сохраните. Дождитесь зелёного workflow **Deploy GitHub Pages** на вкладке **Actions** после следующего push в `main`.
+
+Файл workflow: `.github/workflows/deploy-github-pages.yml` — собирает `web/` с `VITE_BASE_PATH=/agrocenter/` и выкладывает `dist`. Копия `index.html` → `404.html` нужна, чтобы при обновлении страницы на вложенных маршрутах открывалось SPA.
+
+Локально и на Netlify по-прежнему `base: /` (переменная `VITE_BASE_PATH` не задаётся).
 
 ---
 
