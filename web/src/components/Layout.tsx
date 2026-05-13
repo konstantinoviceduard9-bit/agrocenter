@@ -38,10 +38,18 @@ function SidebarHeader({
 }) {
   return (
     <div className="border-b border-slate-800/80 bg-slate-950/20 px-4 py-4 lg:py-5">
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-start justify-between gap-3">
+        <div
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 via-emerald-600 to-emerald-900 text-white shadow-lg shadow-emerald-950/50 ring-1 ring-white/15"
+          aria-hidden
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M6 20V10M12 20V4M18 20v-8" />
+          </svg>
+        </div>
         <span
           className={[
-            'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1',
+            'shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ring-1',
             dataSource === 'file'
               ? 'bg-emerald-500/15 text-emerald-200 ring-emerald-400/25'
               : 'bg-slate-600/40 text-slate-200 ring-white/10',
@@ -50,8 +58,7 @@ function SidebarHeader({
           {dataSource === 'file' ? 'Снимок JSON' : 'Моки'}
         </span>
       </div>
-      <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400/40" aria-hidden />
-      <BrandWordmark variant="dark" size="md" tagline="Группа компаний" className="mt-3" />
+      <BrandWordmark variant="dark" size="md" tagline="Группа компаний" className="mt-4" />
 
       <div className="mt-4 space-y-0 rounded-xl border border-white/10 bg-slate-800/35 p-3 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.04)] ring-1 ring-black/20">
         <div className="flex gap-3">
