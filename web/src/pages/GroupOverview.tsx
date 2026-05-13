@@ -15,9 +15,11 @@ import { fmtInt, fmtMln } from '../lib/format'
 import { useDashboardFilters } from '../context/DashboardFiltersContext'
 
 export function GroupOverview() {
-  const { periodLabel } = useDashboardFilters()
-  const { companies } = useDashboardData()
+  const { periodLabel, year } = useDashboardFilters()
+  const { companies, getAlerts } = useDashboardData()
   const t = groupTotals(companies)
+  const alerts = getAlerts(year)
+  const criticalCount = alerts.filter((a) => a.severity === 3).length
   const chartData = companies
     .filter((c) => c.revenue2025Mln != null)
     .map((c) => ({
@@ -38,6 +40,29 @@ export function GroupOverview() {
           <StatCard title="Σ Активы 2025" value={`${fmtMln(t.assets)} млн ₽`} hint="по заполненным строкам" />
           <StatCard title="Σ Численность" value={`${fmtInt(t.employees)} чел.`} hint="включая ЦАТ" />
         </div>
+
+        {alerts.length > 0 ? (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 shadow-sm">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-900/80">Сигналы за {year}</p>
+              <p className="mt-1 text-sm text-amber-950">
+                Найдено <strong>{alerts.length}</strong> сигналов
+                {criticalCount > 0 ? (
+                  <>
+                    , из них критичных: <strong>{criticalCount}</strong>
+                  </>
+                ) : null}
+                .
+              </p>
+            </div>
+            <Link
+              to="/operations/alerts"
+              className="shrink-0 rounded-xl bg-amber-800 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-900"
+            >
+              Открыть алерты
+            </Link>
+          </div>
+        ) : null}
 
         <div className="grid gap-8 lg:grid-cols-5">
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:col-span-3">

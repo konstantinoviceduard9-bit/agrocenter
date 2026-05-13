@@ -18,6 +18,7 @@ import {
 } from '../data/financeMocks'
 import { applyDashboardSnapshot } from '../lib/applyDashboardSnapshot'
 import type { YearId } from '../types/period'
+import { deriveAlerts, type DerivedAlert } from '../data/deriveAlerts'
 
 export type DashboardDataSource = 'builtin' | 'file'
 
@@ -31,6 +32,7 @@ type Ctx = {
   sumCashMln: (year: YearId) => number
   arAgingTotals: (year: YearId) => ReturnType<typeof arAgingTotalsForRows>
   apDue7d: (year: YearId) => number
+  getAlerts: (year: YearId) => DerivedAlert[]
   dataSource: DashboardDataSource
   loadError: string | null
   loadWarnings: string[]
@@ -110,6 +112,12 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
   const arAgingTotals = useCallback((year: YearId) => arAgingTotalsForRows(getARRows(year)), [getARRows])
   const apDue7d = useCallback((year: YearId) => apDue7dForRows(getAPRows(year)), [getAPRows])
 
+  const getAlerts = useCallback(
+    (year: YearId) =>
+      deriveAlerts(companies, year, getARRows(year), getAPRows(year), getCashRows(year)),
+    [companies, getARRows, getAPRows, getCashRows],
+  )
+
   const value = useMemo<Ctx>(
     () => ({
       companies,
@@ -121,6 +129,7 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
       sumCashMln,
       arAgingTotals,
       apDue7d,
+      getAlerts,
       dataSource,
       loadError,
       loadWarnings,
@@ -134,6 +143,7 @@ export function DashboardDataProvider({ children }: { children: ReactNode }) {
       sumCashMln,
       arAgingTotals,
       apDue7d,
+      getAlerts,
       dataSource,
       loadError,
       loadWarnings,

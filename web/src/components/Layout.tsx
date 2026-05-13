@@ -61,7 +61,7 @@ export function Layout() {
 
           <NavHeading>Операции</NavHeading>
           <NavLink to="/operations/alerts" className={item}>
-            Алерты (план)
+            Алерты
           </NavLink>
 
           <NavHeading>Юрлица</NavHeading>

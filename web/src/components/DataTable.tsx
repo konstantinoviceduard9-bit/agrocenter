@@ -37,7 +37,7 @@ export function DataTable<T extends object>({ columns, rows, empty }: Props<T>) 
           {rows.map((row, i) => (
             <tr key={i} className="hover:bg-slate-50/80">
               {columns.map((c) => (
-                <td key={c.id} className="whitespace-nowrap px-4 py-2.5 text-slate-800">
+                <td key={c.id} className="max-w-md px-4 py-2.5 text-slate-800">
                   {c.cell(row)}
                 </td>
               ))}
