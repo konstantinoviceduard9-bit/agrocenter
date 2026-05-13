@@ -132,7 +132,8 @@ Build: `npm run build`, Publish: **`dist`** (относительно `web/`).
 
 ### Вариант B — вообще без постоянного хостинга (раз с ноутбука)
 
-1. В папке `web/`: `npm run build`, затем `npm run preview:public` (слушает `0.0.0.0:4173` — удобно для туннеля).
+1. В папке `web/`: `npm run build`, затем `npm run preview:public` (слушает `0.0.0.0:4173` — удобно для туннеля).  
+   **Или одной командой:** `npm run demo:share` — сборка + превью + случайный HTTPS-URL (см. `web/README.md`).
 2. Поставьте [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/installation/) или [ngrok](https://ngrok.com/), выполните туннель на порт **4173** (например `cloudflared tunnel --url http://localhost:4173`).
 3. Получите **временный HTTPS-URL** на 1 встречу; после закрытия туннеля сайт извне недоступен.
 
