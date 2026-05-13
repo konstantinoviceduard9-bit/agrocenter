@@ -134,6 +134,10 @@ Build: `npm run build`, Publish: **`dist`** (относительно `web/`).
 
 Файл workflow: `.github/workflows/deploy-github-pages.yml` — собирает `web/` с `VITE_BASE_PATH=/agrocenter/` и выкладывает `dist`. Копия `index.html` → `404.html` нужна, чтобы при обновлении страницы на вложенных маршрутах открывалось SPA.
 
+1. **Settings** → **Pages** → источник **GitHub Actions**.
+2. **Actions** → **Deploy GitHub Pages** — дождитесь зелёной сборки (после push в `main` или **Run workflow**).
+3. Если запуск **красный**: откройте его → job **build** / **deploy** → в конце лога ищите **красную строку с текстом ошибки**. В списке запусков у крестика показывается только **заголовок коммита**, это не объяснение сбоя.
+
 Локально и на Netlify по-прежнему `base: /` (переменная `VITE_BASE_PATH` не задаётся).
 
 ---
