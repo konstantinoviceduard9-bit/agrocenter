@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ИИ в компании — простая презентация</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f3f0ea;
+      --card: #fffdf9;
+      --ink: #1f2937;
+      --muted: #5c6370;
+      --accent: #c2410c;
+      --accent-bg: #ffedd5;
+      --line: #e5e0d8;
+      --ok: #166534;
+      --ok-bg: #dcfce7;
+      --font: "Manrope", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font);
+      background: var(--paper);
+      color: var(--ink);
+      overflow: hidden;
+    }
+
+    .app {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(0.5rem, 2vw, 1.25rem);
+      gap: 0.75rem;
+    }
+
+    .slide-wrap {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .slide {
+      display: none;
+      width: min(920px, 100%);
+      background: var(--card);
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+      padding: clamp(1.25rem, 4vw, 2.5rem);
+      overflow: auto;
+      animation: fade 0.35s ease;
+    }
+    .slide.on { display: block; }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-bg);
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+    .tag.green {
+      color: var(--ok);
+      background: var(--ok-bg);
+    }
+    .tag.gray {
+      color: var(--muted);
+      background: #f3f4f6;
+    }
+
+    h1 {
+      font-size: clamp(1.45rem, 4.2vw, 2.1rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.6rem;
+    }
+
+    .lead {
+      font-size: clamp(1rem, 2.4vw, 1.2rem);
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 38em;
+    }
+
+    p, li {
+      font-size: clamp(0.95rem, 2.1vw, 1.08rem);
+      line-height: 1.55;
+    }
+
+    ul.plain {
+      list-style: none;
+      margin-top: 1rem;
+    }
+    ul.plain li {
+      position: relative;
+      padding-left: 1.4rem;
+      margin-bottom: 0.65rem;
+    }
+    ul.plain li::before {
+      content: "—";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .big-example {
+      margin-top: 1.25rem;
+      padding: 1.25rem 1.35rem;
+      border-radius: 16px;
+      background: var(--accent-bg);
+      border: 1px dashed rgba(194, 65, 12, 0.35);
+    }
+    .big-example h2 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    .big-example .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      margin-top: 0.5rem;
+    }
+    .stat {
+      flex: 1 1 140px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--line);
+    }
+    .stat .num {
+      font-size: clamp(1.35rem, 3.5vw, 1.85rem);
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.1;
+    }
+    .stat .lbl {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+      line-height: 1.3;
+    }
+
+    .grid {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .g2 { grid-template-columns: 1fr; }
+    @media (min-width: 640px) {
+      .g2 { grid-template-columns: 1fr 1fr; }
+    }
+
+    .box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+    }
+    .box h3 {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+
+    table.simple {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: clamp(0.88rem, 1.9vw, 1rem);
+    }
+    table.simple th,
+    table.simple td {
+      border-bottom: 1px solid var(--line);
+      padding: 0.6rem 0.5rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.simple th {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      width: 32%;
+    }
+
+    .footer-bar {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .dots {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      max-width: 100%;
+    }
+    .dots button {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: none;
+      background: #d6d3cd;
+      cursor: pointer;
+      padding: 0;
+    }
+    .dots button.on {
+      background: var(--accent);
+      transform: scale(1.15);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .nav button {
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 999px;
+      border: 2px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      color: var(--ink);
+    }
+    .nav button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .nav span {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+      min-width: 4.5rem;
+      text-align: center;
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    strong { font-weight: 700; color: var(--ink); }
+
+    .future-list li {
+      margin-bottom: 0.5rem;
+      padding-left: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="slide-wrap">
+      <!-- 1 -->
+      <section class="slide on" data-n="1">
+        <span class="tag gray">Презентация для руководителя</span>
+        <h1>Искусственный интеллект в нашей группе компаний</h1>
+        <p class="lead">Объясняем простыми словами: зачем это, что получится, где осторожность, и с чего начать без «революции» в учёте.</p>
+        <p style="margin-top:1.25rem;font-size:0.95rem;color:var(--muted)">Ваши программы (например, 1С) <strong>остаются</strong>. Сверху появляется помощник: отчёты, напоминания, ответы по цифрам и документам — там, где вы сами разрешите.</p>
+      </section>
+
+      <!-- 2 -->
+      <section class="slide" data-n="2">
+        <span class="tag">Зачем об этом говорить</span>
+        <h1>Сейчас картина по компаниям собирается долго</h1>
+        <ul class="plain">
+          <li>У нас <strong>несколько фирм и направлений</strong>. Чтобы понять «как мы живём», часто ждут сводку <strong>несколько дней</strong>.</li>
+          <li>В сезон (поле, закупки, перевозки) важно решать <strong>быстро</strong>, а не после очередной таблицы «на выходных».</li>
+          <li>Умный помощник нужен не вместо вас, а чтобы <strong>раньше подсветить</strong>: где отклонение, где риск, где «узкое горлышко».</li>
+        </ul>
+      </section>
+
+      <!-- 3 -->
+      <section class="slide" data-n="3">
+        <span class="tag">Простое определение</span>
+        <h1>Что мы называем «ИИ» здесь и сейчас</h1>
+        <ul class="plain">
+          <li>Это <strong>не замена</strong> вашей учётной программы. Это <strong>экран или бот</strong>, который читает ваши данные и документы и отвечает по правилам, которые мы заранее согласуем.</li>
+          <li>Это <strong>не «он сам всё решит»</strong>. По деньгам, договорам и спорным вещам <strong>решаете вы</strong>; машина готовит черновик и собирает факты.</li>
+          <li>Это <strong>не чат в интернете для всех</strong>. Доступ только тем, кого вы укажете; что можно показывать наружу — отдельно обсуждаем.</li>
+        </ul>
+      </section>
+
+      <!-- 4 -->
+      <section class="slide" data-n="4">
+        <span class="tag green">Что уже реально сделать</span>
+        <h1>Чем это поможет в обычной работе</h1>
+        <ul class="plain">
+          <li><strong>Короткая сводка</strong> по фирме или группе: «что изменилось за неделю» — без ручного копирования.</li>
+          <li><strong>Вопрос голосом или текстом:</strong> «сколько на счетах», «кто должен дольше месяца», «какой план на завтра по погоде» — если эти данные подключены.</li>
+          <li><strong>Напоминания</strong>, если цифра вышла за порог: долг, платёж, простой, срок по договору.</li>
+          <li><strong>Поиск по договорам и приказам</strong> с отсылкой к файлу, а не «ответ из головы».</li>
+        </ul>
+      </section>
+
+      <!-- 5 -->
+      <section class="slide" data-n="5">
+        <span class="tag gray">Честно</span>
+        <h1>Без порядка в цифрах помощник слабый</h1>
+        <ul class="plain">
+          <li>Если в справочниках бардак, на выходе будет <strong>красивый текст вместо правды</strong>. Сначала выбираем маленький кусок учёта и приводим его в порядок.</li>
+          <li>Сложные споры и крупные сделки — <strong>всё равно люди</strong>.</li>
+          <li>Если нельзя светить данные в облако — заранее говорим: тогда другой техничный вариант (свой сервер и т.п.). От этого зависит цена и срок.</li>
+        </ul>
+      </section>
+
+      <!-- 6 Пример 4 человека -->
+      <section class="slide" data-n="6">
+        <span class="tag">Пример на пальцах</span>
+        <h1>Четверо сотрудников и «склейка» отчётов</h1>
+        <p class="lead">Считаем очень грубо, чтобы показать порядок цифр. Реальная экономия у вас будет после замера по факту.</p>
+        <div class="big-example">
+          <h2>Ситуация</h2>
+          <p>Четыре человека. Каждый <strong>5 часов в неделю</strong> тратит только на то, чтобы собрать цифры из разных мест в одну картину (сводки, перепроверки, письма «скиньте ещё раз»).</p>
+          <div class="row">
+            <div class="stat">
+              <div class="num">20 ч</div>
+              <div class="lbl">в неделю на четверых — только «склейка»</div>
+            </div>
+            <div class="stat">
+              <div class="num">≈10 ч</div>
+              <div class="lbl">если помощник заберёт половину этой рутины</div>
+            </div>
+            <div class="stat">
+              <div class="num">≈20 000 ₽</div>
+              <div class="lbl">в месяц «условно», 10 ч × 4 нед × ~500 ₽ за час работы*</div>
+            </div>
+          </div>
+          <p style="margin-top:0.85rem;font-size:0.88rem;color:var(--muted)">*Цифра «за час» взята для примера; у вас подставляется реальная стоимость часа или полная стоимость места — тогда сумма выше. Отдельно считается выгода от <strong>меньше ошибок</strong> и <strong>быстрее реакции</strong> (простой, штраф, касса) — это часто важнее «часов на сводку».</p>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="slide" data-n="7">
+        <span class="tag">Зачем группе</span>
+        <h1>Четыре понятные выгоды</h1>
+        <div class="grid g2">
+          <div class="box"><h3>Меньше ждать</h3><p>Руководитель быстрее видит общую картину.</p></div>
+          <div class="box"><h3>Раньше тревога</h3><p>Если что-то пошло не так с деньгами, долгами или сроками — сигнал сразу, а не «потом разберёмся».</p></div>
+          <div class="box"><h3>Меньше потерь</h3><p>Меньше ручного переноса — меньше ошибок в цифрах.</p></div>
+          <div class="box"><h3>Одни правила</h3><p>Все смотрят на метрики в одном смысле — меньше споров «у меня другая цифра».</p></div>
+        </div>
+      </section>
+
+      <!-- 8 зарубеж -->
+      <section class="slide" data-n="8">
+        <span class="tag gray">Не выдумываем велосипед</span>
+        <h1>На Западе похожие вещи уже продают как продукты</h1>
+        <p class="lead">У них чаще «один завод техники — одна программа». У нас задача другая: <strong>несколько наших фирм и наша 1С</strong>. Но идея та же: данные → один экран → сигналы.</p>
+        <div class="grid g2" style="margin-top:0.75rem">
+          <div class="box"><h3>John Deere</h3><p>Одно окно по полю и технике.</p></div>
+          <div class="box"><h3>Climate FieldView</h3><p>Карты поля, урожай, нормы.</p></div>
+          <div class="box"><h3>Cargill и др.</h3><p>Заводы, стада, логистика — у них свои большие системы.</p></div>
+          <div class="box"><h3>У нас</h3><p>Делаем <strong>под вашу схему юрлиц</strong> и ваши отчёты, а не «коробку как у соседа».</p></div>
+        </div>
+      </section>
+
+      <!-- 9 финдир -->
+      <section class="slide" data-n="9">
+        <span class="tag gray">Если рядом финансовый директор</span>
+        <h1>Что важно финансовому блоку</h1>
+        <table class="simple">
+          <tr><th>Тема</th><td>Те же цифры, что в учёте, но быстрее доводятся до руководителя. Напоминания по срокам и долгам — по правилам, которые вы утвердите.</td></tr>
+          <tr><th>Контроль</th><td>Кто что спрашивал — можно вести журнал. Что нельзя выносить в облако — заранее список.</td></tr>
+        </table>
+      </section>
+
+      <!-- 10 люди -->
+      <section class="slide" data-n="10">
+        <span class="tag">Про людей</span>
+        <h1>Это не про «уволить четверых»</h1>
+        <ul class="plain">
+          <li>Сначала освобождается время на <strong>нормальную работу</strong>: разборы, поле, клиенты, контроль — а не на «копировать-вставить».</li>
+          <li>Если когда-то понадобится менять штат — это <strong>отдельное решение</strong> руководства, не «автоматом от робота».</li>
+        </ul>
+      </section>
+
+      <!-- 11 оборудование -->
+      <section class="slide" data-n="11">
+        <span class="tag">Техника и поле</span>
+        <h1>Сначала сигнал, потом «умность»</h1>
+        <ul class="plain">
+          <li>Чтобы ИИ помогал с техникой и полем, нужны <strong>простые вещи</strong>: где машина, сколько простояла, что сделано на поле, что внесено. Без этого «умный советчик» будет гадать.</li>
+          <li>Начинаем с того, что <strong>уже пишется в учёте</strong> или на дисплее машины; потом можно добавлять датчики и карты.</li>
+        </ul>
+      </section>
+
+      <!-- 12 будущее -->
+      <section class="slide" data-n="12">
+        <span class="tag green">Дальше по дороге</span>
+        <h1>Что можем модернизировать и улучшить после первого шага</h1>
+        <p class="lead">Первый шаг — узкий пилот. Если он зашёл, по очереди можно наращивать «мозги» и железо — без большого скачка в первый день.</p>
+        <ul class="plain" style="margin-top:0.75rem">
+          <li><strong>Телематика и техника:</strong> где стоит парк, простои, топливо — меньше «потерянных» часов в сезон.</li>
+          <li><strong>Поле:</strong> карты, погода, напоминания по окнам посева и уборки — по мере появления нормальных границ полей в системе.</li>
+          <li><strong>Склад и переработка:</strong> понятные срезы по выпуску и браку — если производство отдаёт цифры стабильно.</li>
+          <li><strong>Единый «пульт» по группе:</strong> больше фирм в одном окне, больше метрик и сигналов — когда первый этап отработан и доверие есть.</li>
+          <li><strong>Голос и отчёты «как разговор»:</strong> можно улучшать качество распознавания и шаблоны ответов под ваши формулировки.</li>
+        </ul>
+      </section>
+
+      <!-- 13 инфра -->
+      <section class="slide" data-n="13">
+        <span class="tag gray">Техника без жаргона</span>
+        <h1>Где «живёт» помощник — три понятных варианта</h1>
+        <table class="simple">
+          <tr><th>Облако</th><td>Быстрее начать, платим по использованию. Подходит, если не секретные данные или только обезличенные сводки.</td></tr>
+          <tr><th>Облако + своя мощность</th><td>Баланс: часть в периметре, часть в арендованном «железе».</td></tr>
+          <tr><th>Своё</th><td>Данные не уходят наружу. Дороже и дольше на старте, зато жёсткий контроль.</td></tr>
+        </table>
+        <p style="margin-top:0.85rem;font-size:0.92rem;color:var(--muted)">Точную смету скажем после того, как утвердим: сколько людей, какие фирмы в пилоте, какие цифры тянем.</p>
+      </section>
+
+      <!-- 14 пилот -->
+      <section class="slide" data-n="14">
+        <span class="tag">С чего начать</span>
+        <h1>Пилот на 60–90 дней — маленький, но настоящий</h1>
+        <ul class="plain">
+          <li><strong>Один канал</strong> для вас (часто удобен Telegram): цифры, напоминания, вопросы текстом и голосом.</li>
+          <li><strong>Одна-две фирмы</strong> в начале, чтобы не расползтись по всем базам сразу.</li>
+          <li><strong>Пять–семь цифр</strong>, которые вы реально смотрите каждую неделю: деньги на счетах, долги, кому платить, плюс одна-две «живые» производственные.</li>
+        </ul>
+        <div class="big-example" style="margin-top:1rem;background:var(--ok-bg);border-color:rgba(22,101,52,0.3)">
+          <h2 style="color:var(--ok)">Когда пилот считаем удачным</h2>
+          <p style="color:var(--ink)">Вы <strong>регулярно</strong> этим пользуетесь; есть <strong>хотя бы один</strong> случай, когда сигнал или сводка реально помогли; доступы и правила записаны на бумаге или в регламенте.</p>
+        </div>
+      </section>
+
+      <!-- 15 риски -->
+      <section class="slide" data-n="15">
+        <span class="tag">Риски</span>
+        <h1>Что может пойти не так — и что делаем заранее</h1>
+        <table class="simple">
+          <tr><th>Грязные справочники</th><td>Сначала только проверенный кусок учёта + чек-лист перед стартом.</td></tr>
+          <tr><th>Ошибка по деньгам</th><td>Ответ только из отчёта или таблицы с номером строки, не «красивый текст».</td></tr>
+          <tr><th>Утечка</th><td>Список людей с доступом; что нельзя в облако — отдельным списком.</td></tr>
+          <tr><th>«Не хотят делиться цифрами»</th><td>Один ответственный от вас сверху и простое правило: что отдаём в пилот.</td></tr>
+        </table>
+      </section>
+
+      <!-- 16 решения -->
+      <section class="slide" data-n="16">
+        <span class="tag">Попросить решить сегодня</span>
+        <h1>Шесть коротких пунктов</h1>
+        <ul class="plain">
+          <li>Срок пилота: <strong>60 или 90 дней</strong>.</li>
+          <li>Кто <strong>ведёт с вашей стороны</strong>: один от бизнеса + один от учёта или IT.</li>
+          <li><strong>Где храним и считаем</strong> данные: облако / смешанно / только у себя.</li>
+          <li>Список <strong>5–7 цифр</strong> и откуда они берутся — за 3–5 рабочих дней после встречи.</li>
+          <li><strong>Потолок денег</strong> на пилот — вы или финдиректор с лимитом.</li>
+          <li><strong>День разбора</strong> результата: расширяем, правим или останавливаем.</li>
+        </ul>
+      </section>
+
+      <!-- 17 финал -->
+      <section class="slide" data-n="17">
+        <span class="tag green">Итог</span>
+        <h1>Начинаем с малого — растём по мере доверия к цифрам</h1>
+        <p class="lead">Сначала один «пульт» и узкий набор фирм и метрик. Потом — техника, поле, склады и больше фирм в одном окне. Всё это можно <strong>модернизировать по шагам</strong>, без обещания «всё и сразу».</p>
+        <p style="margin-top:1rem;font-size:0.95rem;color:var(--muted)">Если нужно — добавьте личное обращение к руководителю на первом или этом слайде.</p>
+      </section>
+    </div>
+
+    <div class="footer-bar">
+      <div class="dots" id="dots"></div>
+      <div class="nav">
+        <button type="button" id="prev">← Назад</button>
+        <span id="num">1 / 17</span>
+        <button type="button" class="primary" id="next">Вперёд →</button>
+      </div>
+      <p class="hint">Стрелки на клавиатуре · пробел — вперёд · полный экран: F11</p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const dots = document.getElementById("dots");
+      const num = document.getElementById("num");
+      let i = 0;
+
+      slides.forEach((_, j) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.title = "Слайд " + (j + 1);
+        b.addEventListener("click", () => show(j));
+        dots.appendChild(b);
+      });
+      const dotBtns = () => Array.from(dots.querySelectorAll("button"));
+
+      function show(j) {
+        i = Math.max(0, Math.min(j, slides.length - 1));
+        slides.forEach((s, k) => s.classList.toggle("on", k === i));
+        dotBtns().forEach((b, k) => b.classList.toggle("on", k === i));
+        num.textContent = i + 1 + " / " + slides.length;
+      }
+
+      document.getElementById("prev").addEventListener("click", () => show(i - 1));
+      document.getElementById("next").addEventListener("click", () => show(i + 1));
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+          e.preventDefault();
+          show(i + 1);
+        }
+        if (e.key === "ArrowLeft" || e.key === "PageUp") {
+          e.preventDefault();
+          show(i - 1);
+        }
+      });
+
+      let x0 = null;
+      document.addEventListener("touchstart", (e) => { x0 = e.changedTouches[0].screenX; }, { passive: true });
+      document.addEventListener("touchend", (e) => {
+        if (x0 == null) return;
+        const d = e.changedTouches[0].screenX - x0;
+        x0 = null;
+        if (d < -40) show(i + 1);
+        if (d > 40) show(i - 1);
+      }, { passive: true });
+
+      show(0);
+    })();
+  </script>
+</body>
+</html>

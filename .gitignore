@@ -1,0 +1,16 @@
+# Vite / Node (дашборд)
+web/node_modules/
+web/dist/
+
+# Локальные секреты и среда
+.env
+.env.*
+!.env.example
+
+# ОС и редактор
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/*
+!.vscode/extensions.json

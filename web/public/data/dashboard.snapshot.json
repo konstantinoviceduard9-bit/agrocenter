@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "companies": [
+    {
+      "id": "tsat",
+      "revenue2025Mln": 14.2,
+      "netProfit2025Mln": 0.4,
+      "assets2025Mln": 3.1,
+      "note": "Пример: данные подтянуты из public/data/dashboard.snapshot.json — замените на свои."
+    }
+  ]
+}
