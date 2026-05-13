@@ -109,7 +109,7 @@ export function CompanyPage() {
     tab === 'finance'
       ? `Мок по компании за ${periodLabel}.`
       : tab === 'triggers'
-        ? `Набор мониторинга под роль «${roleLabel[c.role]}»: ${roleTriggersSummary(c.role)}. Пороги и push в TG / MAX — после настройки бэкенда.`
+        ? `Набор мониторинга под роль «${roleLabel[c.role]}»: ${roleTriggersSummary(c.role)}. В таблице — демо-пороги и каналы; расчёт и доставка — после подключения данных и бэкенда.`
         : `${c.fullName} · ИНН ${c.inn} · ${periodLabel}`
 
   return (
@@ -197,8 +197,8 @@ export function CompanyPage() {
         ) : (
           <div className="max-w-4xl space-y-6">
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-950">
-              <strong>{triggers.length}</strong> шаблонов триггеров для <strong>{c.shortName}</strong>. Ниже — что логично мониторить для{' '}
-              <strong>{roleLabel[c.role]}</strong> (из концепции дашборда и типовых рисков отрасли). Реальные пороги и уведомления подключим к данным и TG позже.
+              <strong>{triggers.length}</strong> триггеров в демо для <strong>{c.shortName}</strong>. В таблице заданы{' '}
+              <strong>условные пороги</strong> и <strong>каналы уведомлений</strong> (шаблон под роль «{roleLabel[c.role]}»). Подключение к 1С, расчётам и TG / MAX — отдельный этап после согласования.
             </div>
             <DataTable<CompanyTrigger>
               columns={[
@@ -210,12 +210,19 @@ export function CompanyPage() {
                 { id: 'title', header: 'Триггер', cell: (r) => <span className="font-medium text-slate-900">{r.title}</span> },
                 { id: 'desc', header: 'Смысл / условие', cell: (r) => <span className="text-slate-600">{r.description}</span> },
                 {
-                  id: 'act',
-                  header: 'Действие',
-                  cell: () => (
-                    <span className="text-xs text-slate-400" title="Позже: пороги и доставка в мессенджеры">
-                      Шаблон
+                  id: 'thr',
+                  header: 'Порог (демо)',
+                  cell: (r) => (
+                    <span className="text-xs text-slate-800 tabular-nums" title="Условное значение для презентации">
+                      {r.thresholdDemo ?? '—'}
                     </span>
+                  ),
+                },
+                {
+                  id: 'nfy',
+                  header: 'Канал (демо)',
+                  cell: (r) => (
+                    <span className="text-xs font-semibold text-emerald-900">{r.notifyDemo ?? '—'}</span>
                   ),
                 },
               ]}
