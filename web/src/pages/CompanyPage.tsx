@@ -227,7 +227,11 @@ export function CompanyPage() {
                 },
               ]}
               rows={triggers}
+              rowKey={(r) => r.id}
             />
+            <p className="mt-2 text-xs text-slate-500">
+              Не видите колонок «Порог» и «Канал»? Прокрутите таблицу <strong>вправо</strong> — на узком экране они в конце строки.
+            </p>
           </div>
         )}
       </div>

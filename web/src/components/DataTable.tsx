@@ -10,9 +10,11 @@ type Props<T extends object> = {
   columns: Column<T>[]
   rows: T[]
   empty?: ReactNode
+  /** Стабильный ключ строки (иначе индекс). Для списков с id передавайте row => row.id */
+  rowKey?: (row: T) => string
 }
 
-export function DataTable<T extends object>({ columns, rows, empty }: Props<T>) {
+export function DataTable<T extends object>({ columns, rows, empty, rowKey }: Props<T>) {
   if (!rows.length) {
     return (
       <div className="surface-card border-dashed border-slate-300/90 bg-slate-50/90 px-4 py-12 text-center text-sm text-slate-500">
@@ -35,7 +37,7 @@ export function DataTable<T extends object>({ columns, rows, empty }: Props<T>) 
         </thead>
         <tbody className="divide-y divide-slate-100">
           {rows.map((row, i) => (
-            <tr key={i} className="transition-colors hover:bg-emerald-50/40">
+            <tr key={rowKey ? rowKey(row) : i} className="transition-colors hover:bg-emerald-50/40">
               {columns.map((c) => (
                 <td key={c.id} className="max-w-md px-4 py-3 text-slate-800 first:pl-5 last:pr-5">
                   {c.cell(row)}
