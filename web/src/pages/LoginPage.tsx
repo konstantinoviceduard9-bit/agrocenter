@@ -1,6 +1,7 @@
 import { useEffect, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth, type DemoRole } from '../context/AuthContext'
+import { BrandWordmark } from '../components/BrandWordmark'
 
 export function LoginPage() {
   const { login, user } = useAuth()
@@ -21,15 +22,16 @@ export function LoginPage() {
 
   if (user) {
     return (
-      <div className="flex min-h-full items-center justify-center bg-slate-100 text-sm text-slate-500">
+      <div className="flex min-h-dvh items-center justify-center bg-slate-100 text-sm text-slate-500">
         Перенаправление…
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center bg-slate-100 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="flex min-h-dvh items-center justify-center bg-slate-100 px-4 py-6">
+      <div className="w-full max-w-md surface-card surface-card--lift p-8">
+        <BrandWordmark variant="light" size="lg" tagline="Группа компаний" className="mb-6" />
         <h1 className="text-xl font-bold text-slate-900">Вход (демо)</h1>
         <p className="mt-2 text-sm text-slate-600">
           Заглушка под будущую авторизацию. Данные хранятся только в <code className="rounded bg-slate-100 px-1">localStorage</code> этого браузера.

@@ -33,10 +33,14 @@ export function AlertsPage() {
   return (
     <>
       <PageShell
+        breadcrumbs={[
+          { label: 'Сводка', to: '/' },
+          { label: 'Алерты' },
+        ]}
         title="Алерты"
-        subtitle={`Сигналы из текущих данных (мок + снимок JSON) за ${year}. Период в шапке: ${periodLabel}. Правила: дебиторка по ведрам, горизонт кассы до 28 дн., оплата поставщику до 3 дн.`}
+        subtitle={`Сигналы за ${year}. Период в шапке: ${periodLabel}. Правила: дебиторка по ведрам, горизонт кассы до 28 дн., оплата поставщику до 3 дн.`}
       />
-      <div className="space-y-6 px-6 py-8 lg:px-10">
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
         <div className="grid gap-4 sm:grid-cols-3">
           <Mini title="Всего сигналов" value={String(rows.length)} strong />
           <Mini
@@ -48,7 +52,7 @@ export function AlertsPage() {
         </div>
 
         <DataTable<DerivedAlert>
-          empty="Нет сигналов для выбранного года — см. кассу и дебиторку в моках."
+          empty="Нет сигналов для выбранного года — см. кассу и дебиторку в демо-данных."
           columns={[
             {
               id: 'sev',
@@ -87,7 +91,7 @@ function Mini({ title, value, strong, tone }: { title: string; value: string; st
   const toneCls =
     tone === 'rose' ? 'text-rose-800' : tone === 'amber' ? 'text-amber-900' : strong ? 'text-slate-900' : 'text-slate-800'
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="surface-card surface-card--lift p-4">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{title}</p>
       <p className={`mt-1 text-2xl tabular-nums ${strong ? 'font-bold' : 'font-semibold'} ${toneCls}`}>{value}</p>
     </div>

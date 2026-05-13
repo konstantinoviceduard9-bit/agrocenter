@@ -2,6 +2,7 @@ import { PageShell } from '../components/PageShell'
 import { useDashboardFilters } from '../context/DashboardFiltersContext'
 import { useDashboardData } from '../context/DashboardDataContext'
 import { fmtMln } from '../lib/format'
+import { APP_COPY } from '../lib/appCopy'
 import { DataTable } from '../components/DataTable'
 import { Link } from 'react-router-dom'
 import { downloadCsv } from '../lib/csv'
@@ -27,21 +28,25 @@ export function CreditorsPage() {
   return (
     <>
       <PageShell
+        breadcrumbs={[
+          { label: 'Сводка', to: '/' },
+          { label: 'Кредиторская задолженность' },
+        ]}
         title="Кредиторская задолженность"
-        subtitle={`Поставщики и ближайшие оплаты (мок). ${periodLabel}.`}
+        subtitle={`Поставщики и ближайшие оплаты (демо). ${periodLabel}. ${APP_COPY.ledgerRoadmap}`}
         actions={
           <button
             type="button"
             onClick={exportCsv}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-50"
+            className="btn-ghost"
           >
             Скачать CSV
           </button>
         }
       />
-      <div className="space-y-6 px-6 py-8 lg:px-10">
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
         <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          К оплате в горизонте <strong>7 дней</strong> (мок): <span className="tabular-nums font-bold">{fmtMln(due7)} млн ₽</span>
+          К оплате в горизонте <strong>7 дней</strong> (демо): <span className="tabular-nums font-bold">{fmtMln(due7)} млн ₽</span>
         </div>
         <DataTable<APRow>
           columns={[

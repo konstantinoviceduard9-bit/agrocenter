@@ -1,8 +1,76 @@
 @import "tailwindcss";
 
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family:
+      "Inter",
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      "Noto Sans",
+      "Helvetica Neue",
+      Arial,
+      sans-serif;
+    @apply antialiased text-slate-900;
+  }
+
+  ::selection {
+    @apply bg-emerald-200/90 text-emerald-950;
+  }
+
+  :where(a, button, input, select, textarea, summary):focus-visible {
+    @apply rounded-md outline-2 outline-offset-2 outline-emerald-600/45;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Единая «плитка» для карточек и панелей */
+  .surface-card {
+    @apply rounded-2xl border border-slate-200/90 bg-white shadow-sm shadow-slate-900/5 ring-1 ring-slate-950/[0.04];
+  }
+
+  .surface-card--lift {
+    @apply transition-shadow duration-200 hover:shadow-md hover:ring-slate-950/[0.07];
+  }
+
+  /* Вторичные кнопки (экспорт CSV, «Выйти») — единый визуал */
+  .btn-ghost {
+    @apply rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 active:bg-slate-100;
+  }
+}
+
 html,
 body,
 #root {
+  min-height: 100%;
   height: 100%;
   margin: 0;
+}
+
+/* Якорь «К основному содержимому» */
+#app-main:focus {
+  outline: none;
+}
+#app-main:focus-visible {
+  box-shadow: inset 0 0 0 2px rgb(16 185 129 / 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surface-card--lift {
+    transition: none !important;
+  }
 }

@@ -2,6 +2,7 @@ import { PageShell } from '../components/PageShell'
 import { useDashboardFilters } from '../context/DashboardFiltersContext'
 import { useDashboardData } from '../context/DashboardDataContext'
 import { fmtInt, fmtMln } from '../lib/format'
+import { APP_COPY } from '../lib/appCopy'
 import { DataTable } from '../components/DataTable'
 import { Link } from 'react-router-dom'
 
@@ -26,12 +27,16 @@ export function CashPage() {
   return (
     <>
       <PageShell
+        breadcrumbs={[
+          { label: 'Сводка', to: '/' },
+          { label: 'Касса и ликвидность' },
+        ]}
         title="Касса и ликвидность"
-        subtitle={`Остатки и условный «горизонт» по моку. Период: ${periodLabel}. Источник правды позже — 1С / банк.`}
+        subtitle={`Остатки и условный горизонт ликвидности (демо). ${periodLabel}. ${APP_COPY.ledgerRoadmap}`}
       />
-      <div className="space-y-6 px-6 py-8 lg:px-10">
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
         <div className="grid gap-4 sm:grid-cols-3">
-          <Kpi title="Σ Денег на счетах (мок)" value={`${fmtMln(total)} млн ₽`} hint="Сумма по таблице ниже" />
+          <Kpi title="Σ Денег на счетах (демо)" value={`${fmtMln(total)} млн ₽`} hint="Сумма по таблице ниже" />
           <Kpi title="Юрлиц в выборке" value={`${fmtInt(companies.length)}`} hint="Все из справочника" />
           <Kpi title="Год данных" value={year} hint="Переключатель в шапке" />
         </div>
@@ -50,7 +55,7 @@ export function CashPage() {
 
 function Kpi({ title, value, hint }: { title: string; value: string; hint: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="surface-card surface-card--lift p-5">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>
       <p className="mt-2 text-xl font-bold tabular-nums text-slate-900">{value}</p>
       <p className="mt-1 text-xs text-slate-400">{hint}</p>

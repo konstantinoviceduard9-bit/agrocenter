@@ -11,6 +11,7 @@ import { DebtorsPage } from './pages/DebtorsPage'
 import { CreditorsPage } from './pages/CreditorsPage'
 import { AlertsPage } from './pages/AlertsPage'
 import { AdminSettingsPage } from './pages/AdminSettingsPage'
+import { companies } from './data/companies'
 
 const routerBasename =
   import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -23,6 +24,13 @@ export default function App() {
           <DashboardDataProvider>
             <Routes>
             <Route path="/login" element={<LoginPage />} />
+            {companies.map((c) => (
+              <Route
+                key={`legacy-company-${c.id}`}
+                path={c.id}
+                element={<Navigate to={`/company/${c.id}`} replace />}
+              />
+            ))}
             <Route element={<Layout />}>
               <Route index element={<GroupOverview />} />
               <Route path="finance/cash" element={<CashPage />} />

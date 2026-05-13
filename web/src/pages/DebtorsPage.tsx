@@ -2,6 +2,7 @@ import { PageShell } from '../components/PageShell'
 import { useDashboardFilters } from '../context/DashboardFiltersContext'
 import { useDashboardData } from '../context/DashboardDataContext'
 import { fmtMln } from '../lib/format'
+import { APP_COPY } from '../lib/appCopy'
 import { DataTable } from '../components/DataTable'
 import { Link } from 'react-router-dom'
 import { downloadCsv } from '../lib/csv'
@@ -27,19 +28,23 @@ export function DebtorsPage() {
   return (
     <>
       <PageShell
+        breadcrumbs={[
+          { label: 'Сводка', to: '/' },
+          { label: 'Дебиторская задолженность' },
+        ]}
         title="Дебиторская задолженность"
-        subtitle={`Aging по моку. ${periodLabel}. Позже — выгрузка из 1С по контрагентам.`}
+        subtitle={`Aging дебиторки (демо). ${periodLabel}. ${APP_COPY.ledgerRoadmap}`}
         actions={
           <button
             type="button"
             onClick={exportCsv}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-50"
+            className="btn-ghost"
           >
             Скачать CSV
           </button>
         }
       />
-      <div className="space-y-6 px-6 py-8 lg:px-10">
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
         <div className="grid gap-4 sm:grid-cols-4">
           <Mini title="0–30 дн." value={fmtMln(totals.buckets['0–30'])} />
           <Mini title="31–60 дн." value={fmtMln(totals.buckets['31–60'])} />
@@ -74,7 +79,7 @@ export function DebtorsPage() {
 
 function Mini({ title, value, strong }: { title: string; value: string; strong?: boolean }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="surface-card surface-card--lift p-4">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{title}</p>
       <p className={`mt-1 text-lg tabular-nums ${strong ? 'font-bold text-slate-900' : 'font-semibold text-slate-800'}`}>{value}</p>
     </div>

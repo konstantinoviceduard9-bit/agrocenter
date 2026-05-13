@@ -41,6 +41,11 @@ jobs:
           npm ci
           npm run build
 
+      - name: Verify index.html uses repository base for assets
+        run: |
+          test -f web/dist/index.html
+          grep -qF "/${{ github.event.repository.name }}/assets/" web/dist/index.html
+
       - name: SPA fallback (GitHub Pages 404)
         run: cp web/dist/index.html web/dist/404.html
 

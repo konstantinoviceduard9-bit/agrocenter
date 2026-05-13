@@ -1,0 +1,37 @@
+# Автопроверка: линт + production build (как перед деплоем Pages).
+# См. AGENTS.md — роль «QA / сборка».
+
+name: Quality
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - '.github/workflows/quality.yml'
+  pull_request:
+    paths:
+      - 'web/**'
+      - '.github/workflows/quality.yml'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      VITE_BASE_PATH: /${{ github.event.repository.name }}/
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install and check
+        run: |
+          npm ci
+          npm run check

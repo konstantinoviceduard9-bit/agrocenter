@@ -4,11 +4,15 @@ export function AdminSettingsPage() {
   return (
     <>
       <PageShell
+        breadcrumbs={[
+          { label: 'Сводка', to: '/' },
+          { label: 'Настройки и доступы' },
+        ]}
         title="Администрирование"
         subtitle="Справочники, доступы, allowlist для мессенджеров — заготовка под прод."
       />
-      <div className="space-y-6 px-6 py-8 lg:px-10">
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+        <section className="surface-card surface-card--lift p-5">
           <h3 className="text-sm font-bold text-slate-900">Данные без API (снимок JSON)</h3>
           <p className="mt-2 text-sm text-slate-600">
             Файл <code className="rounded bg-slate-100 px-1">web/public/data/dashboard.snapshot.json</code> подгружается
@@ -27,13 +31,13 @@ export function AdminSettingsPage() {
             </li>
           </ul>
         </section>
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="surface-card surface-card--lift p-5">
           <h3 className="text-sm font-bold text-slate-900">Мессенджеры (TG / MAX)</h3>
           <p className="mt-2 text-sm text-slate-600">
             Таблица сопоставления: сотрудник ↔ Telegram user id ↔ MAX id ↔ доступные юрлица. Сейчас — в документации проекта (`docs/integraciya-telegram-i-max.md`).
           </p>
         </section>
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="surface-card surface-card--lift p-5">
           <h3 className="text-sm font-bold text-slate-900">Интеграции</h3>
           <p className="mt-2 text-sm text-slate-600">URL 1С, расписание выгрузок, секреты (только на сервере после появления API).</p>
         </section>

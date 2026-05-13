@@ -157,8 +157,7 @@ export function applyDashboardSnapshot(raw: unknown): ApplySnapshotResult {
   const mergedCompanies: Company[] = builtinCompanies.map((c) => {
     const patch = patchById.get(c.id)
     if (!patch) return { ...c }
-    const { id: _id, ...rest } = patch
-    return { ...c, ...rest }
+    return { ...c, ...patch, id: c.id }
   })
 
   for (const id of patchById.keys()) {
