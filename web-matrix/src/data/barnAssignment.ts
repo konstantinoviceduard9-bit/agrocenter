@@ -212,11 +212,12 @@ export type AssignmentState = {
   handover: HandoverRecord
 }
 
-import { loadLastVetHandover } from './vetStaff'
+import { loadActiveVet, loadLastVetHandover } from './vetStaff'
 
+const lastHandover = loadLastVetHandover()
 const defaultHandover: HandoverRecord = {
-  handedBy: loadLastVetHandover().handedBy,
-  receivedBy: loadLastVetHandover().receivedBy,
+  handedBy: lastHandover.handedBy || loadActiveVet(),
+  receivedBy: lastHandover.receivedBy,
   confirmedAt: null,
 }
 

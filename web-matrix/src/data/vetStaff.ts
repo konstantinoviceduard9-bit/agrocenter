@@ -22,6 +22,21 @@ export type VeterinarianName = (typeof veterinarians)[number]
 export type BarnReceiverName = (typeof barnReceivers)[number]
 
 const LAST_VET_HANDOVER_KEY = 'matrix-barn-last-vet-handover'
+const ACTIVE_VET_KEY = 'matrix-active-vet'
+
+export function loadActiveVet(): string {
+  try {
+    const v = localStorage.getItem(ACTIVE_VET_KEY)
+    if (v && veterinarians.includes(v as VeterinarianName)) return v
+  } catch {
+    /* ignore */
+  }
+  return veterinarians[0]
+}
+
+export function saveActiveVet(name: string) {
+  localStorage.setItem(ACTIVE_VET_KEY, name)
+}
 
 export function loadLastVetHandover(): { handedBy: string; receivedBy: string } {
   try {
