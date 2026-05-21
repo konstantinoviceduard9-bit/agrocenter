@@ -54,6 +54,8 @@ npm run build
 
 Технически: `vite-plugin-pwa` (manifest, service worker, `display: standalone`). Подробнее: `docs/neral-matrix-pwa-install.md`.
 
+**Уведомления по ролям** (назначение → сотруднику, выполнение → руководству): на одном устройстве сразу; между ПК и телефонами — подключите **Supabase** (`docs/neral-matrix-sync-supabase.md`, `web-matrix/.env.example`).
+
 ## Мобильная версия (ветслужба)
 
 Пульт рассчитан на **телефон и планшет**:

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ManagerNotificationsPanel } from '../components/ManagerNotificationsPanel'
+import { SyncStatusStrip } from '../components/SyncStatusStrip'
 import { TaskShareBanner } from '../components/TaskShareBanner'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
@@ -16,10 +17,21 @@ import {
 } from '../data/staff'
 import { appendLeadershipTask, subscribeLeadershipTasks, type TaskSharePayload } from '../lib/leadershipTasks'
 import {
+  fetchNotifications,
+  fetchTasks,
+  persistTasks,
+  subscribeCloudSync,
+  syncMode,
+} from '../lib/matrixSync'
+import {
   decodeCompletionShare,
+  applyCloudNotifications,
+  loadManagerNotifications,
   mergeCompletionFromShare,
-  tryShowCompletionNotification,
+  notifyTaskAssigned,
+  tryShowRoleNotification,
 } from '../lib/managerNotifications'
+import { staffMemberById } from '../data/staff'
 
 function RoleBadge({ roleId }: { roleId: StaffRoleId }) {
   const r = roleById(roleId)
@@ -113,7 +125,22 @@ export function StaffPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  useEffect(() => subscribeLeadershipTasks(() => setTasks(loadLeadershipTasks())), [])
+  const refreshFromCloud = async () => {
+    const cloudTasks = await fetchTasks()
+    setTasks(cloudTasks)
+    const cloudNotes = await fetchNotifications()
+    if (cloudNotes) applyCloudNotifications(cloudNotes)
+  }
+
+  useEffect(() => {
+    void refreshFromCloud()
+    const unsubLocal = subscribeLeadershipTasks(() => setTasks(loadLeadershipTasks()))
+    const unsubCloud = subscribeCloudSync(() => void refreshFromCloud())
+    return () => {
+      unsubLocal()
+      unsubCloud()
+    }
+  }, [])
 
   useEffect(() => {
     if (typeof Notification === 'undefined') return
@@ -132,16 +159,9 @@ export function StaffPage() {
       saveLeadershipTasks(synced)
       setTasks(synced)
       setCompletionImported(`${payload.employeeName}: ${payload.taskTitle}`)
-      void tryShowCompletionNotification({
-        id: 'import',
-        taskId: payload.taskId,
-        employeeId: payload.employeeId,
-        employeeName: payload.employeeName,
-        taskTitle: payload.taskTitle,
-        assignedBy: payload.assignedBy,
-        completedAt: payload.completedAt,
-        read: false,
-      })
+      for (const note of loadManagerNotifications().filter((n) => n.kind === 'task_completed')) {
+        void tryShowRoleNotification(note)
+      }
       setTimeout(() => setCompletionImported(null), 6000)
     }
     navigate('/staff', { replace: true })
@@ -172,8 +192,19 @@ export function StaffPage() {
       status: 'open',
       createdAt: new Date().toLocaleString('ru-RU'),
     }
-    setTasks(appendLeadershipTask(next))
-    setSharePayload({ employeeId, title, assignedBy: assigner, dueDate })
+    const updated = appendLeadershipTask(next)
+    setTasks(updated)
+    void persistTasks(updated)
+    const target = staffMemberById(employeeId)
+    const notes = notifyTaskAssigned(next, target?.name ?? 'Сотрудник')
+    for (const note of notes) {
+      void tryShowRoleNotification(note)
+    }
+    if (syncMode() === 'local') {
+      setSharePayload({ employeeId, title, assignedBy: assigner, dueDate })
+    } else {
+      setSharePayload(null)
+    }
   }
 
   return (
@@ -183,7 +214,11 @@ export function StaffPage() {
         subtitle="Реестр персонала фермы: доярки, ветеринары, водители и др. Руководство назначает задачи — в мобильном приложении сотрудник увидит только свои (следующий этап)."
       />
 
-      {sharePayload ? <TaskShareBanner payload={sharePayload} onDismiss={() => setSharePayload(null)} /> : null}
+      <SyncStatusStrip />
+
+      {sharePayload && syncMode() === 'local' ? (
+        <TaskShareBanner payload={sharePayload} onDismiss={() => setSharePayload(null)} />
+      ) : null}
 
       {completionImported ? (
         <p className="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-900">

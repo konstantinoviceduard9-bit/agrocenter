@@ -1,32 +1,50 @@
-import type { LeadershipTask } from '../data/staff'
+import type { LeadershipTask, StaffRoleId } from '../data/staff'
+import type { NotificationKind } from './notificationRouting'
+import { targetsForTaskAssigned, targetsForTaskCompleted } from './notificationRouting'
+import { uploadNotifications } from './matrixSync'
 
-export type ManagerNotification = {
+export type AppNotification = {
   id: string
+  kind: NotificationKind
   taskId: string
   employeeId: string
   employeeName: string
   taskTitle: string
   assignedBy: string
-  completedAt: string
+  targetEmployeeId?: string
+  targetRoles?: StaffRoleId[]
+  createdAt: string
   read: boolean
 }
+
+/** @deprecated используйте AppNotification */
+export type ManagerNotification = AppNotification & { completedAt?: string }
 
 const NOTIFICATIONS_KEY = 'matrix-manager-notifications-v1'
 export const MANAGER_NOTIFICATIONS_CHANGED = 'matrix-manager-notifications-changed'
 
-export function loadManagerNotifications(): ManagerNotification[] {
+export function loadManagerNotifications(): AppNotification[] {
   try {
     const raw = localStorage.getItem(NOTIFICATIONS_KEY)
     if (!raw) return []
-    return JSON.parse(raw) as ManagerNotification[]
+    const parsed = JSON.parse(raw) as AppNotification[]
+    return parsed.map((n) => ({
+      ...n,
+      kind: n.kind ?? 'task_completed',
+      createdAt: n.createdAt ?? (n as ManagerNotification).completedAt ?? '',
+    }))
   } catch {
     return []
   }
 }
 
-function saveManagerNotifications(list: ManagerNotification[]) {
+function saveManagerNotifications(list: AppNotification[]) {
   localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(list))
   window.dispatchEvent(new Event(MANAGER_NOTIFICATIONS_CHANGED))
+}
+
+export function applyCloudNotifications(list: AppNotification[]) {
+  saveManagerNotifications(list)
 }
 
 export function subscribeManagerNotifications(onChange: () => void): () => void {
@@ -47,32 +65,72 @@ export function subscribeManagerNotifications(onChange: () => void): () => void 
   }
 }
 
-export function unreadManagerCount(): number {
-  return loadManagerNotifications().filter((n) => !n.read).length
+function pushNotifications(notes: AppNotification[]) {
+  const merged = [...notes, ...loadManagerNotifications()]
+  const seen = new Set<string>()
+  const unique = merged.filter((n) => {
+    const key = `${n.kind}-${n.taskId}-${n.targetEmployeeId ?? ''}-${n.targetRoles?.join(',') ?? ''}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+  saveManagerNotifications(unique)
+  void uploadNotifications(unique)
+  return notes
 }
 
-export function markAllManagerNotificationsRead() {
-  const list = loadManagerNotifications().map((n) => ({ ...n, read: true }))
-  saveManagerNotifications(list)
-}
-
-export function notifyManagerTaskCompleted(
+function buildNote(
   task: LeadershipTask,
   employeeName: string,
-): ManagerNotification {
-  const note: ManagerNotification = {
-    id: `mn-${Date.now()}`,
+  kind: NotificationKind,
+  target: { targetEmployeeId?: string; targetRoles?: StaffRoleId[] },
+): AppNotification {
+  return {
+    id: `mn-${kind}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    kind,
     taskId: task.id,
     employeeId: task.employeeId,
     employeeName,
     taskTitle: task.title,
     assignedBy: task.assignedBy,
-    completedAt: new Date().toLocaleString('ru-RU'),
+    targetEmployeeId: target.targetEmployeeId,
+    targetRoles: target.targetRoles,
+    createdAt: new Date().toLocaleString('ru-RU'),
     read: false,
   }
-  const list = [note, ...loadManagerNotifications().filter((n) => n.taskId !== task.id)]
+}
+
+/** Уведомления по ролям: сотруднику + руководству. */
+export function notifyTaskAssigned(task: LeadershipTask, employeeName: string): AppNotification[] {
+  const notes = targetsForTaskAssigned(task).map((t) => buildNote(task, employeeName, 'task_assigned', t))
+  return pushNotifications(notes)
+}
+
+export function notifyTaskCompleted(task: LeadershipTask, employeeName: string): AppNotification[] {
+  const notes = targetsForTaskCompleted(task).map((t) => buildNote(task, employeeName, 'task_completed', t))
+  return pushNotifications(notes)
+}
+
+/** @deprecated */
+export function notifyManagerTaskCompleted(task: LeadershipTask, employeeName: string): AppNotification {
+  return notifyTaskCompleted(task, employeeName)[0]!
+}
+
+export function markAllManagerNotificationsRead() {
+  const list = loadManagerNotifications().map((n) => ({ ...n, read: true }))
   saveManagerNotifications(list)
-  return note
+  void uploadNotifications(list)
+}
+
+export function markNotificationsReadForViewer(viewerId: string | null, roleId: StaffRoleId | null) {
+  const list = loadManagerNotifications().map((n) => {
+    const forMe =
+      (viewerId && n.targetEmployeeId === viewerId) ||
+      (roleId && n.targetRoles?.includes(roleId))
+    return forMe ? { ...n, read: true } : n
+  })
+  saveManagerNotifications(list)
+  void uploadNotifications(list)
 }
 
 export type CompletionSharePayload = {
@@ -99,18 +157,18 @@ export function decodeCompletionShare(encoded: string): CompletionSharePayload |
 }
 
 export function mergeCompletionFromShare(payload: CompletionSharePayload): void {
-  const note: ManagerNotification = {
-    id: `mn-share-${Date.now()}`,
-    taskId: payload.taskId,
-    employeeId: payload.employeeId,
-    employeeName: payload.employeeName,
-    taskTitle: payload.taskTitle,
-    assignedBy: payload.assignedBy,
-    completedAt: payload.completedAt,
-    read: false,
-  }
-  const list = [note, ...loadManagerNotifications().filter((n) => n.taskId !== payload.taskId)]
-  saveManagerNotifications(list)
+  notifyTaskCompleted(
+    {
+      id: payload.taskId,
+      employeeId: payload.employeeId,
+      title: payload.taskTitle,
+      assignedBy: payload.assignedBy,
+      dueDate: '',
+      status: 'done',
+      createdAt: payload.completedAt,
+    },
+    payload.employeeName,
+  )
 }
 
 export function staffNotifyShareUrl(payload: CompletionSharePayload): string {
@@ -120,8 +178,7 @@ export function staffNotifyShareUrl(payload: CompletionSharePayload): string {
   return `${window.location.origin}${root}staff?${params.toString()}`
 }
 
-/** Системное уведомление (если разрешено) — на этом же устройстве. */
-export async function tryShowCompletionNotification(note: ManagerNotification): Promise<void> {
+export async function tryShowRoleNotification(note: AppNotification): Promise<void> {
   if (typeof Notification === 'undefined') return
   if (Notification.permission === 'default') {
     try {
@@ -131,13 +188,19 @@ export async function tryShowCompletionNotification(note: ManagerNotification): 
     }
   }
   if (Notification.permission !== 'granted') return
+  const title = note.kind === 'task_assigned' ? 'Новая задача' : 'Задача выполнена'
+  const body =
+    note.kind === 'task_assigned'
+      ? `${note.assignedBy}: ${note.taskTitle}`
+      : `${note.employeeName}: ${note.taskTitle}`
   try {
-    new Notification('Задача выполнена', {
-      body: `${note.employeeName}: ${note.taskTitle}`,
-      tag: note.taskId,
-      lang: 'ru',
-    })
+    new Notification(title, { body, tag: note.id, lang: 'ru' })
   } catch {
     /* ignore */
   }
+}
+
+/** @deprecated */
+export async function tryShowCompletionNotification(note: AppNotification): Promise<void> {
+  return tryShowRoleNotification(note)
 }

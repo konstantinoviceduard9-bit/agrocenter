@@ -1,20 +1,37 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useStaffAuth } from '../context/StaffAuthContext'
+import { viewerSeesNotification } from '../lib/notificationRouting'
 import {
   loadManagerNotifications,
   markAllManagerNotificationsRead,
   subscribeManagerNotifications,
-  type ManagerNotification,
+  type AppNotification,
 } from '../lib/managerNotifications'
 
+const kindLabel = {
+  task_assigned: 'Назначена',
+  task_completed: 'Выполнена',
+} as const
+
 export function ManagerNotificationsPanel() {
+  const { employee } = useStaffAuth()
   const [list, setList] = useState(loadManagerNotifications)
-  const unread = list.filter((n) => !n.read)
 
   useEffect(() => subscribeManagerNotifications(() => setList(loadManagerNotifications())), [])
 
-  if (list.length === 0) {
+  const visible = useMemo(
+    () => list.filter((n) => viewerSeesNotification(n, employee)),
+    [list, employee],
+  )
+  const unread = visible.filter((n) => !n.read)
+
+  if (visible.length === 0) {
     return (
-      <p className="text-sm text-slate-600">Пока нет отметок «выполнено» от сотрудников.</p>
+      <p className="text-sm text-slate-600">
+        {employee
+          ? 'Нет уведомлений для вашей роли. Назначения и выполнения других сотрудников видят руководители.'
+          : 'Пока нет уведомлений. Войдите как руководитель или включите синхронизацию Supabase.'}
+      </p>
     )
   }
 
@@ -22,9 +39,7 @@ export function ManagerNotificationsPanel() {
     <div>
       {unread.length > 0 ? (
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-emerald-800">
-            Новых: {unread.length}
-          </p>
+          <p className="text-sm font-semibold text-emerald-800">Новых: {unread.length}</p>
           <button
             type="button"
             onClick={() => {
@@ -38,7 +53,7 @@ export function ManagerNotificationsPanel() {
         </div>
       ) : null}
       <ul className="max-h-48 space-y-2 overflow-y-auto">
-        {list.slice(0, 20).map((n) => (
+        {visible.slice(0, 20).map((n) => (
           <NotificationRow key={n.id} note={n} />
         ))}
       </ul>
@@ -46,7 +61,7 @@ export function ManagerNotificationsPanel() {
   )
 }
 
-function NotificationRow({ note }: { note: ManagerNotification }) {
+function NotificationRow({ note }: { note: AppNotification }) {
   return (
     <li
       className={[
@@ -55,12 +70,13 @@ function NotificationRow({ note }: { note: ManagerNotification }) {
       ].join(' ')}
     >
       <p className="font-semibold">
-        {note.read ? '✓ ' : '● '}
-        {note.employeeName}
+        {!note.read ? '● ' : '✓ '}
+        {kindLabel[note.kind]} · {note.employeeName}
       </p>
       <p className="mt-0.5">{note.taskTitle}</p>
       <p className="mt-1 text-[10px] opacity-80">
-        {note.completedAt} · назначил {note.assignedBy}
+        {note.createdAt} · назначил {note.assignedBy}
+        {note.targetRoles?.length ? ` · роли: ${note.targetRoles.join(', ')}` : ''}
       </p>
     </li>
   )

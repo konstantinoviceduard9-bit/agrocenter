@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { CompletionShareBanner } from '../components/CompletionShareBanner'
 import { ConfirmDialog } from '../components/ConfirmDialog'
+import { SyncStatusStrip } from '../components/SyncStatusStrip'
 import { VetTaskQueue } from '../components/VetTaskQueue'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
@@ -14,9 +15,18 @@ import {
   subscribeLeadershipTasks,
   taskFromSharePayload,
 } from '../lib/leadershipTasks'
+import { viewerSeesNotification } from '../lib/notificationRouting'
 import {
-  notifyManagerTaskCompleted,
-  tryShowCompletionNotification,
+  fetchNotifications,
+  fetchTasks,
+  persistTasks,
+  subscribeCloudSync,
+  syncMode,
+} from '../lib/matrixSync'
+import {
+  applyCloudNotifications,
+  notifyTaskCompleted,
+  tryShowRoleNotification,
   type CompletionSharePayload,
 } from '../lib/managerNotifications'
 
@@ -69,7 +79,22 @@ export function MyTasksPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
-  useEffect(() => subscribeLeadershipTasks(() => setTasks(loadLeadershipTasks())), [])
+  const refreshFromCloud = async () => {
+    const cloudTasks = await fetchTasks()
+    setTasks(cloudTasks)
+    const cloudNotes = await fetchNotifications()
+    if (cloudNotes) applyCloudNotifications(cloudNotes)
+  }
+
+  useEffect(() => {
+    void refreshFromCloud()
+    const unsubLocal = subscribeLeadershipTasks(() => setTasks(loadLeadershipTasks()))
+    const unsubCloud = subscribeCloudSync(() => void refreshFromCloud())
+    return () => {
+      unsubLocal()
+      unsubCloud()
+    }
+  }, [])
 
   useEffect(() => {
     const encoded = searchParams.get('add')
@@ -101,6 +126,7 @@ export function MyTasksPage() {
     const updated = tasks.map((t) => (t.id === id ? { ...t, status } : t))
     setTasks(updated)
     saveLeadershipTasks(updated)
+    void persistTasks(updated)
     return updated.find((t) => t.id === id)
   }
 
@@ -116,16 +142,22 @@ export function MyTasksPage() {
     if (!confirmTask || !employee) return
     const doneTask = applyStatus(confirmTask.id, 'done')
     if (doneTask) {
-      const note = notifyManagerTaskCompleted(doneTask, employee.name)
-      void tryShowCompletionNotification(note)
-      setCompletionShare({
-        taskId: doneTask.id,
-        employeeId: employee.id,
-        employeeName: employee.name,
-        taskTitle: doneTask.title,
-        assignedBy: doneTask.assignedBy,
-        completedAt: note.completedAt,
-      })
+      const notes = notifyTaskCompleted(doneTask, employee.name)
+      for (const note of notes) {
+        if (employee && viewerSeesNotification(note, employee)) void tryShowRoleNotification(note)
+      }
+      if (syncMode() === 'local') {
+        setCompletionShare({
+          taskId: doneTask.id,
+          employeeId: employee.id,
+          employeeName: employee.name,
+          taskTitle: doneTask.title,
+          assignedBy: doneTask.assignedBy,
+          completedAt: new Date().toLocaleString('ru-RU'),
+        })
+      } else {
+        setCompletionShare(null)
+      }
     }
     setConfirmTask(null)
   }
@@ -173,7 +205,9 @@ export function MyTasksPage() {
         </p>
       ) : null}
 
-      {completionShare ? (
+      <SyncStatusStrip />
+
+      {completionShare && syncMode() === 'local' ? (
         <CompletionShareBanner payload={completionShare} onDismiss={() => setCompletionShare(null)} />
       ) : null}
 
