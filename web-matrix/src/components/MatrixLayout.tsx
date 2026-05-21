@@ -4,7 +4,6 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { MATRIX_COPY } from '../lib/appCopy'
 import { groupDashboardHref } from '../lib/dashboardLinks'
 import { matrixNavSections, navLabelForPath } from '../lib/matrixNav'
-import { farmMeta } from '../data/matrixMocks'
 import { DataStrip } from './DataStrip'
 
 const navItem = ({ isActive }: { isActive: boolean }) =>
@@ -17,7 +16,7 @@ const navItem = ({ isActive }: { isActive: boolean }) =>
 
 function MenuIcon({ open }: { open: boolean }) {
   return (
-    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+    <svg className="h-5 w-5 text-current" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
       {open ? (
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
       ) : (
@@ -38,12 +37,12 @@ export function MatrixLayout() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-[#e8eaed] text-slate-900">
-      <header className="shrink-0 border-b border-blue-900/30 bg-gradient-to-r from-blue-800 to-blue-700 text-white shadow-md">
-        <div className="flex items-center justify-between gap-3 px-3 py-2 lg:px-4">
+      <header className="shrink-0 border-b border-slate-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between gap-3 px-3 py-2.5 lg:px-4">
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
-              className="rounded p-1.5 hover:bg-white/10 lg:hidden"
+              className="rounded-lg border border-slate-200 p-1.5 text-slate-700 hover:bg-slate-50 lg:hidden"
               aria-expanded={navOpen}
               aria-controls="matrix-sidebar"
               onClick={() => setNavOpen((o) => !o)}
@@ -51,22 +50,17 @@ export function MatrixLayout() {
               <span className="sr-only">Меню</span>
               <MenuIcon open={navOpen} />
             </button>
-            <div className="min-w-0">
-              <p className="truncate text-xs text-blue-100/90">
-                {farmMeta.siteCode} · {farmMeta.afifarmVersion}
-              </p>
-              <h1 className="truncate text-base font-bold tracking-tight sm:text-lg">{MATRIX_COPY.farmName}</h1>
-              <p className="truncate text-[11px] text-blue-100/80 lg:hidden">{currentLabel}</p>
-            </div>
+            <p className="truncate text-sm font-semibold text-slate-800 lg:hidden">{currentLabel}</p>
+            <p className="hidden text-sm font-semibold text-slate-600 lg:block">Пульт фермы</p>
           </div>
           <div className="flex shrink-0 items-center gap-2 text-xs sm:text-sm">
             <button
               type="button"
-              className="hidden rounded border border-white/25 bg-white/10 px-3 py-1.5 font-medium hover:bg-white/20 sm:inline"
+              className="hidden rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100 sm:inline"
             >
               {MATRIX_COPY.syncLabel}
             </button>
-            <span className="rounded bg-white/15 px-2 py-1 font-medium">Забиров Г.</span>
+            <span className="rounded-lg bg-blue-700 px-2.5 py-1 font-medium text-white">Забиров Г.</span>
           </div>
         </div>
       </header>
@@ -74,8 +68,6 @@ export function MatrixLayout() {
       <DataStrip />
 
       <div className="border-b border-emerald-200/90 bg-gradient-to-r from-emerald-50 to-slate-50 px-4 py-2 text-sm text-slate-800">
-        <span className="font-semibold text-emerald-900">Пульт фермы «Нерал-Матрикс»</span>
-        <span className="mx-2 text-slate-400">·</span>
         Финансы группы (выручка, касса, юрлица) — в{' '}
         <a
           href={groupDashboardHref()}

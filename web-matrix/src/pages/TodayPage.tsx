@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import { FarmHero } from '../components/FarmHero'
 import { WidgetCard } from '../components/WidgetCard'
 import { CountList } from '../components/CountList'
 import { animalListPath, categoryCountItems } from '../data/cowLists'
@@ -29,6 +30,10 @@ function KpiRow({ label, value }: { label: string; value: string }) {
 export function TodayPage() {
   return (
     <div className="grid auto-rows-min gap-3 lg:grid-cols-12 lg:gap-4">
+      <div className="lg:col-span-12">
+        <FarmHero />
+      </div>
+
       <WidgetCard title="Производство молока" className="lg:col-span-4">
         <KpiRow label="Надой последней дойки, л" value={fmtInt(milkProduction.lastSessionLiters)} />
         <KpiRow label="Надой предыдущего дня, л" value={fmtInt(milkProduction.previousDayLiters)} />
