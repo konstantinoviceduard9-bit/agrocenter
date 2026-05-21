@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { PwaInstallHint } from '../components/PwaInstallHint'
 import { useStaffAuth } from '../context/StaffAuthContext'
 import { roleById, staffMembers } from '../data/staff'
 
@@ -27,7 +28,9 @@ export function StaffLoginPage() {
 
   return (
     <div className="mx-auto flex min-h-[70dvh] max-w-md flex-col justify-center px-2 py-6">
-      <h1 className="text-xl font-bold text-slate-900">Вход сотрудника</h1>
+      <PwaInstallHint />
+
+      <h1 className="mt-4 text-xl font-bold text-slate-900">Вход сотрудника</h1>
       <p className="mt-2 text-sm text-slate-600">
         Демо: PIN <strong>1</strong> у всех. Нажмите на своё имя в списке ниже. После входа — только разделы вашей роли и{' '}
         <strong>«Мои задачи»</strong> от руководства.
