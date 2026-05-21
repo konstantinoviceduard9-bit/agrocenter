@@ -1,24 +1,69 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { FeedingIntakePanel } from '../components/FeedingIntakePanel'
 import { FeedingPipelinePanel } from '../components/FeedingPipelinePanel'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
-import { demoBatch, dtmProposal } from '../data/feedingPipeline'
+import { rebuildDtmProposal } from '../data/feedingIntake'
+import {
+  amtsIngredients,
+  demoBatch,
+  dtmProposal,
+  labIndicators,
+  type AmtsIngredient,
+  type DtmIngredientRow,
+  type LabIndicator,
+} from '../data/feedingPipeline'
+import type { IntakeMode } from '../data/feedingIntake'
 import { fmtDec } from '../lib/format'
 
 export function FeedingPage() {
   const batch = demoBatch
-  const totalKg = dtmProposal.reduce((s, r) => s + r.proposedKg, 0)
-  const totalDm = dtmProposal.reduce((s, r) => s + r.dmKg, 0)
-  const totalCost = dtmProposal.reduce((s, r) => s + r.costRub, 0)
+  const [intakeMode, setIntakeMode] = useState<IntakeMode>('digital')
+  const [labRows, setLabRows] = useState<LabIndicator[]>(() => [...labIndicators])
+  const [amtsRows, setAmtsRows] = useState<AmtsIngredient[]>(() => [...amtsIngredients])
+  const [dtmRows, setDtmRows] = useState<DtmIngredientRow[]>(() => [...dtmProposal])
+  const [lastApplied, setLastApplied] = useState<string | null>(null)
+
+  useEffect(() => {
+    setDtmRows(rebuildDtmProposal(amtsRows, labRows))
+  }, [amtsRows, labRows])
+
+  const applyLab = useCallback((rows: LabIndicator[]) => {
+    setLabRows(rows)
+    setLastApplied(`Лаборатория обновлена · ${new Date().toLocaleString('ru-RU')}`)
+  }, [])
+
+  const applyAmts = useCallback((rows: AmtsIngredient[]) => {
+    setAmtsRows(rows)
+    setLastApplied(`Рацион AMTS обновлён · ${new Date().toLocaleString('ru-RU')}`)
+  }, [])
+
+  const totals = useMemo(() => {
+    const totalKg = dtmRows.reduce((s, r) => s + r.proposedKg, 0)
+    const totalDm = dtmRows.reduce((s, r) => s + r.dmKg, 0)
+    const totalCost = dtmRows.reduce((s, r) => s + r.costRub, 0)
+    return { totalKg, totalDm, totalCost }
+  }, [dtmRows])
 
   return (
     <>
       <PageTitle
         title="Кормление · DTM"
-        subtitle="Автозагрузка из Агроплема + AMTS → проверка зоотехником → выгрузка в DTM и кормогруппу Afimilk (демо-поток)."
+        subtitle="Два способа загрузки: цифровые файлы или фото с планшета → проверка зоотехником → DTM и Afimilk."
       />
 
-      <FeedingPipelinePanel />
+      <FeedingIntakePanel
+        mode={intakeMode}
+        onModeChange={setIntakeMode}
+        onApplyLab={applyLab}
+        onApplyAmts={applyAmts}
+        lastApplied={lastApplied}
+      />
+
+      <div className="mt-6">
+        <FeedingPipelinePanel labRows={labRows} amtsRows={amtsRows} dtmRows={dtmRows} />
+      </div>
 
       <section className="mt-8">
         <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-500">
@@ -26,9 +71,9 @@ export function FeedingPage() {
         </h3>
         <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: 'Общий вес, кг', value: fmtDec(totalKg, 2) },
-            { label: 'СВ, кг', value: fmtDec(totalDm, 2) },
-            { label: 'Стоимость / корова, ₽', value: fmtDec(totalCost, 2) },
+            { label: 'Общий вес, кг', value: fmtDec(totals.totalKg, 2) },
+            { label: 'СВ, кг', value: fmtDec(totals.totalDm, 2) },
+            { label: 'Стоимость / корова, ₽', value: fmtDec(totals.totalCost, 2) },
             { label: 'Ревизия', value: `${batch.revision} · ${batch.revisionDate}` },
           ].map((k) => (
             <div
@@ -74,7 +119,7 @@ export function FeedingPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {dtmProposal.map((row) => (
+                  {dtmRows.map((row) => (
                     <tr key={row.code} className="border-b border-slate-100">
                       <td className="px-2 py-1.5 tabular-nums">{row.code}</td>
                       <td className="px-2 py-1.5">{row.name}</td>

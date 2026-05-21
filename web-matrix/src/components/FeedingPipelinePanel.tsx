@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { WidgetCard } from './WidgetCard'
 import {
-  amtsIngredients,
   demoBatch,
-  dtmProposal,
-  labIndicators,
   loadPipelineState,
   pipelineSteps,
   savePipelineState,
   stepIndex,
+  type AmtsIngredient,
   type DtmIngredientRow,
+  type LabIndicator,
   type PipelineState,
 } from '../data/feedingPipeline'
 import { fmtDec } from '../lib/format'
@@ -88,21 +87,31 @@ function ProposalTable({
   )
 }
 
-export function FeedingPipelinePanel() {
+type Props = {
+  labRows: LabIndicator[]
+  amtsRows: AmtsIngredient[]
+  dtmRows: DtmIngredientRow[]
+}
+
+export function FeedingPipelinePanel({ labRows, amtsRows, dtmRows }: Props) {
   const batch = demoBatch
   const [state, setState] = useState<PipelineState>(() => loadPipelineState(batch.id))
   const [zootech, setZootech] = useState(() => localStorage.getItem('matrix-zootech-name') ?? '')
   const [checked, setChecked] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(dtmProposal.map((r) => [r.code, true])),
+    Object.fromEntries(dtmRows.map((r) => [r.code, true])),
   )
+
+  useEffect(() => {
+    setChecked(Object.fromEntries(dtmRows.map((r) => [r.code, true])))
+  }, [dtmRows])
 
   useEffect(() => {
     setState(loadPipelineState(batch.id))
   }, [batch.id])
 
   const activeStep = stepIndex(state.status)
-  const warnCount = useMemo(() => dtmProposal.filter((r) => r.flag === 'warn' || r.flag === 'new').length, [])
-  const changedCount = useMemo(() => dtmProposal.filter((r) => r.flag === 'changed').length, [])
+  const warnCount = useMemo(() => dtmRows.filter((r) => r.flag === 'warn' || r.flag === 'new').length, [dtmRows])
+  const changedCount = useMemo(() => dtmRows.filter((r) => r.flag === 'changed').length, [dtmRows])
 
   const persist = (next: PipelineState) => {
     setState(next)
@@ -190,7 +199,7 @@ export function FeedingPipelinePanel() {
               </tr>
             </thead>
             <tbody>
-              {labIndicators.map((row) => (
+              {labRows.map((row) => (
                 <tr key={row.name} className={row.inRange ? '' : 'bg-amber-50'}>
                   <td className="py-1 pr-2">{row.name}</td>
                   <td className="py-1 text-right tabular-nums">
@@ -221,7 +230,7 @@ export function FeedingPipelinePanel() {
               </tr>
             </thead>
             <tbody>
-              {amtsIngredients.map((row) => (
+              {amtsRows.map((row) => (
                 <tr key={row.name} className="border-b border-slate-100">
                   <td className="py-1 pr-2">{row.name}</td>
                   <td className="py-1 text-right tabular-nums">{fmtDec(row.dmPct, 0)}</td>
@@ -240,10 +249,10 @@ export function FeedingPipelinePanel() {
           {warnCount}.
         </p>
         <ProposalTable
-          rows={dtmProposal}
+          rows={dtmRows}
           checked={checked}
           onToggle={(code) => setChecked((c) => ({ ...c, [code]: !c[code] }))}
-          onToggleAll={(v) => setChecked(Object.fromEntries(dtmProposal.map((r) => [r.code, v])))}
+          onToggleAll={(v) => setChecked(Object.fromEntries(dtmRows.map((r) => [r.code, v])))}
         />
 
         <div className="mt-4 grid gap-3 border-t border-slate-200 pt-4 sm:grid-cols-2">
