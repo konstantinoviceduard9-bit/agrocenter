@@ -4,6 +4,8 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useDashboardData, type DashboardDataSource } from '../context/DashboardDataContext'
 import { APP_COPY } from '../lib/appCopy'
 import { BrandWordmark } from './BrandWordmark'
+import { CrossDashboardStrip } from './CrossDashboardStrip'
+import { matrixFarmHref } from '../lib/dashboardLinks'
 
 const item = ({ isActive }: { isActive: boolean }) =>
   [
@@ -58,7 +60,7 @@ function SidebarHeader({
           {dataSource === 'file' ? 'Снимок JSON' : 'Моки'}
         </span>
       </div>
-      <BrandWordmark variant="dark" size="md" tagline="Группа компаний" className="mt-4" />
+      <BrandWordmark variant="dark" size="md" tagline="Финансы группы" className="mt-4" />
 
       <div className="mt-4 space-y-0 rounded-xl border border-white/10 bg-slate-800/35 p-3 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.04)] ring-1 ring-black/20">
         <div className="flex gap-3">
@@ -79,7 +81,7 @@ function SidebarHeader({
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Интерфейс</p>
               <p className="mt-0.5 text-xs leading-relaxed text-slate-300">
-                Фильтр периода в шапке страниц и разделы по плану дашборда.
+                Только финансы: сводка, касса, дебиторка, юрлица. Операции фермы — в пульте Матрикс.
               </p>
             </div>
             <div className="h-px bg-gradient-to-r from-transparent via-white/12 to-transparent" />
@@ -209,9 +211,9 @@ export function Layout() {
             Кредиторка
           </NavLink>
 
-          <NavHeading>Операции</NavHeading>
+          <NavHeading>Финансы · сигналы</NavHeading>
           <NavLink to="/operations/alerts" className={item} onClick={closeNav}>
-            Алерты
+            Финансовые алерты
           </NavLink>
 
           <NavHeading>Юрлица</NavHeading>
@@ -220,6 +222,16 @@ export function Layout() {
               {c.shortName}
             </NavLink>
           ))}
+
+          <NavHeading>Другой продукт</NavHeading>
+          <a
+            href={matrixFarmHref()}
+            className="block rounded-lg border border-blue-500/40 bg-blue-950/40 px-3 py-2.5 text-sm font-medium text-blue-200 transition-colors hover:bg-blue-900/50 hover:text-white"
+            onClick={closeNav}
+          >
+            Пульт фермы Матрикс →
+            <span className="mt-1 block text-[10px] font-normal text-blue-300/90">стадо, корма, ветслужба</span>
+          </a>
 
           <NavHeading>Админ</NavHeading>
           <NavLink to="/admin/settings" className={item} onClick={closeNav}>
@@ -233,6 +245,7 @@ export function Layout() {
         tabIndex={-1}
         className="relative z-10 min-h-0 w-full min-w-0 flex-1 overflow-x-hidden overflow-y-auto bg-gradient-to-b from-slate-50 to-slate-100 outline-none lg:min-h-full"
       >
+        <CrossDashboardStrip />
         <Outlet />
       </main>
     </div>

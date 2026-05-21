@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { MATRIX_COPY } from '../lib/appCopy'
+import { groupDashboardHref } from '../lib/dashboardLinks'
 import { farmMeta } from '../data/matrixMocks'
 import { DataStrip } from './DataStrip'
 
@@ -114,6 +115,19 @@ export function MatrixLayout() {
       </header>
 
       <DataStrip />
+
+      <div className="border-b border-emerald-200/90 bg-gradient-to-r from-emerald-50 to-slate-50 px-4 py-2 text-sm text-slate-800">
+        <span className="font-semibold text-emerald-900">Пульт фермы «Нерал-Матрикс»</span>
+        <span className="mx-2 text-slate-400">·</span>
+        Финансы группы (выручка, касса, юрлица) — в{' '}
+        <a
+          href={groupDashboardHref()}
+          className="font-semibold text-emerald-800 underline decoration-emerald-500/70 underline-offset-2 hover:text-emerald-950"
+        >
+          дашборде финансов
+        </a>
+        .
+      </div>
 
       <div className="relative flex min-h-0 flex-1">
         {navOpen ? (

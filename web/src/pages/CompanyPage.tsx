@@ -7,7 +7,7 @@ import { fmtMln } from '../lib/format'
 import { useDashboardFilters } from '../context/DashboardFiltersContext'
 import { DataTable } from '../components/DataTable'
 import type { APRow, ARRow } from '../data/financeMocks'
-import { getCompanyTriggers, roleTriggersSummary, type CompanyTrigger } from '../data/companyTriggers'
+import { MatrixFarmLinkCard } from '../components/MatrixFarmLinkCard'
 import {
   generateMockEmployees,
   getAssetsBreakdownDemo,
@@ -21,13 +21,12 @@ function cell(v: number | null, suffix = '') {
   return `${fmtMln(v)}${suffix}`
 }
 
-type CompanyTab = 'overview' | 'finance' | 'triggers'
+type CompanyTab = 'overview' | 'finance'
 
 type OverviewKpiKey = 'revenue' | 'profit' | 'assets' | 'headcount'
 
 function parseTab(raw: string | null): CompanyTab {
   if (raw === 'finance') return 'finance'
-  if (raw === 'triggers') return 'triggers'
   return 'overview'
 }
 
@@ -88,8 +87,6 @@ export function CompanyPage() {
   const cash = getCashRows(year).find((r) => r.companyId === c.id)
   const ar = getARRows(year).filter((r) => r.companyId === c.id)
   const ap = getAPRows(year).filter((r) => r.companyId === c.id)
-  const triggers = getCompanyTriggers(c)
-
   const tabBtn = (t: CompanyTab, label: string, to: string) => (
     <Link
       to={to}
@@ -102,15 +99,12 @@ export function CompanyPage() {
     </Link>
   )
 
-  const title =
-    tab === 'finance' ? `Финансы — ${c.shortName}` : tab === 'triggers' ? `Триггеры — ${c.shortName}` : c.shortName
+  const title = tab === 'finance' ? `Финансы — ${c.shortName}` : c.shortName
 
   const subtitle =
     tab === 'finance'
-      ? `Мок по компании за ${periodLabel}.`
-      : tab === 'triggers'
-        ? `Набор мониторинга под роль «${roleLabel[c.role]}»: ${roleTriggersSummary(c.role)}. В таблице — демо-пороги и каналы; расчёт и доставка — после подключения данных и бэкенда.`
-        : `${c.fullName} · ИНН ${c.inn} · ${periodLabel}`
+      ? `Финансовый срез (мок) за ${periodLabel}. Операционный мониторинг — только в пульте фермы для Матрикс.`
+      : `${c.fullName} · ИНН ${c.inn} · ${periodLabel} · финансы группы`
 
   return (
     <>
@@ -126,8 +120,9 @@ export function CompanyPage() {
         <div className="flex gap-2 overflow-x-auto overscroll-x-contain pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] sm:flex-wrap sm:overflow-visible [&::-webkit-scrollbar]:hidden">
           {tabBtn('overview', 'Обзор', base)}
           {tabBtn('finance', 'Финансы (мок)', `${base}?tab=finance`)}
-          {tabBtn('triggers', 'Триггеры', `${base}?tab=triggers`)}
         </div>
+
+        {c.id === 'matrix' ? <MatrixFarmLinkCard /> : null}
 
         {tab === 'overview' ? (
           <>
@@ -138,13 +133,6 @@ export function CompanyPage() {
                 <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">{c.note}</p>
               ) : null}
             </header>
-            <p className="max-w-3xl text-sm text-slate-600">
-              Триггеры по этому юрлицу: вкладка{' '}
-              <Link to={`${base}?tab=triggers`} className="font-semibold text-emerald-800 hover:underline">
-                «Триггеры»
-              </Link>
-              .
-            </p>
             <p className="max-w-3xl text-sm font-medium text-slate-800">
               Показатели ниже — кнопки: нажмите плитку, чтобы раскрыть разбиение по строкам или список сотрудников; по сотруднику откроется карточка.
             </p>
@@ -194,46 +182,7 @@ export function CompanyPage() {
               />
             </div>
           </div>
-        ) : (
-          <div className="max-w-4xl space-y-6">
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-950">
-              <strong>{triggers.length}</strong> триггеров в демо для <strong>{c.shortName}</strong>. В таблице заданы{' '}
-              <strong>условные пороги</strong> и <strong>каналы уведомлений</strong> (шаблон под роль «{roleLabel[c.role]}»). Подключение к 1С, расчётам и TG / MAX — отдельный этап после согласования.
-            </div>
-            <DataTable<CompanyTrigger>
-              columns={[
-                {
-                  id: 'area',
-                  header: 'Область',
-                  cell: (r) => <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{r.area}</span>,
-                },
-                { id: 'title', header: 'Триггер', cell: (r) => <span className="font-medium text-slate-900">{r.title}</span> },
-                { id: 'desc', header: 'Смысл / условие', cell: (r) => <span className="text-slate-600">{r.description}</span> },
-                {
-                  id: 'thr',
-                  header: 'Порог (демо)',
-                  cell: (r) => (
-                    <span className="text-xs text-slate-800 tabular-nums" title="Условное значение для презентации">
-                      {r.thresholdDemo ?? '—'}
-                    </span>
-                  ),
-                },
-                {
-                  id: 'nfy',
-                  header: 'Канал (демо)',
-                  cell: (r) => (
-                    <span className="text-xs font-semibold text-emerald-900">{r.notifyDemo ?? '—'}</span>
-                  ),
-                },
-              ]}
-              rows={triggers}
-              rowKey={(r) => r.id}
-            />
-            <p className="mt-2 text-xs text-slate-500">
-              Не видите колонок «Порог» и «Канал»? Прокрутите таблицу <strong>вправо</strong> — на узком экране они в конце строки.
-            </p>
-          </div>
-        )}
+        ) : null}
       </div>
       {employeeDetail ? <EmployeeDetailModal employee={employeeDetail} onClose={() => setEmployeeDetail(null)} /> : null}
     </>

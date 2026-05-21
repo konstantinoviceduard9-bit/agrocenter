@@ -34,7 +34,7 @@ export function GroupOverview() {
       <PageShell
         breadcrumbs={[{ label: 'Сводка' }]}
         title="Сводка по группе"
-        subtitle={`Ключевые показатели группы и выручка по юрлицам (${periodLabel}). ${APP_COPY.quarterFilterNote}`}
+        subtitle={`Финансовые показатели группы и выручка по юрлицам (${periodLabel}). ${APP_COPY.quarterFilterNote}`}
       />
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-6 sm:space-y-10 sm:px-6 sm:py-8 lg:px-10">
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
