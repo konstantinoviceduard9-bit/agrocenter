@@ -1,18 +1,21 @@
+import { Link } from 'react-router-dom'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import { WidgetCard } from '../components/WidgetCard'
 import { CountList } from '../components/CountList'
-import {
-  groups,
-  healthAlerts,
-  herdInventory,
-  malfunctions,
-  milkProduction,
-  reproduction,
-  todayTasks,
-} from '../data/matrixMocks'
+import { animalListPath, categoryCountItems } from '../data/cowLists'
+import { herdInventory, milkProduction } from '../data/matrixMocks'
 import { fmtDec, fmtInt, fmtPct } from '../lib/format'
 
-const donutData = herdInventory.filter((s) => s.id !== 'total').map((s) => ({ name: s.label, value: s.count, fill: s.color }))
+const donutData = herdInventory
+  .filter((s) => s.id !== 'total')
+  .map((s) => ({ name: s.label, value: s.count, fill: s.color }))
+
+const herdLinks: Record<string, string> = {
+  milking: 'herd-milking',
+  pregnant: 'herd-pregnant',
+  open: 'herd-open',
+  dry: 'herd-dry',
+}
 
 function KpiRow({ label, value }: { label: string; value: string }) {
   return (
@@ -36,34 +39,50 @@ export function TodayPage() {
       </WidgetCard>
 
       <WidgetCard title="Здоровье" className="lg:col-span-4">
-        <CountList
-          items={healthAlerts.map((a) => ({
-            label: a.label,
-            count: a.count,
-            highlight: a.severity === 'high',
-          }))}
-        />
+        <CountList items={categoryCountItems('health')} />
       </WidgetCard>
 
       <WidgetCard title="Выполнить сегодня" className="lg:col-span-4">
-        <CountList items={todayTasks} />
+        <CountList items={categoryCountItems('today')} />
       </WidgetCard>
 
       <WidgetCard title="Инвентаризация животных" className="lg:col-span-5">
         <div className="grid gap-3 sm:grid-cols-2">
           <table className="w-full text-left text-xs">
             <tbody>
-              {herdInventory.map((row) => (
-                <tr key={row.id} className="border-b border-slate-100">
-                  <td className="py-1 pr-2 text-slate-600">{row.label}</td>
-                  <td className="py-1 text-right font-semibold tabular-nums">{fmtInt(row.count)}</td>
-                  {row.id !== 'total' ? (
-                    <td className="py-1 pl-2 text-right text-slate-500 tabular-nums">{fmtDec(row.pct, 1)}%</td>
+              {herdInventory.map((row) => {
+                const herdId = herdLinks[row.id]
+                const labelCell =
+                  herdId != null ? (
+                    <Link
+                      to={animalListPath(herdId)}
+                      className="text-blue-800 hover:underline"
+                    >
+                      {row.label}
+                    </Link>
                   ) : (
-                    <td />
-                  )}
-                </tr>
-              ))}
+                    <span className="text-slate-600">{row.label}</span>
+                  )
+                return (
+                  <tr key={row.id} className="border-b border-slate-100">
+                    <td className="py-1 pr-2">{labelCell}</td>
+                    <td className="py-1 text-right font-semibold tabular-nums">
+                      {herdId != null ? (
+                        <Link to={animalListPath(herdId)} className="text-blue-900 hover:underline">
+                          {fmtInt(row.count)}
+                        </Link>
+                      ) : (
+                        fmtInt(row.count)
+                      )}
+                    </td>
+                    {row.id !== 'total' ? (
+                      <td className="py-1 pl-2 text-right text-slate-500 tabular-nums">{fmtDec(row.pct, 1)}%</td>
+                    ) : (
+                      <td />
+                    )}
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
           <div className="h-36 min-h-[8rem]">
@@ -82,11 +101,11 @@ export function TodayPage() {
       </WidgetCard>
 
       <WidgetCard title="Воспроизводство" className="lg:col-span-3">
-        <CountList items={reproduction} />
+        <CountList items={categoryCountItems('reproduction')} />
       </WidgetCard>
 
       <WidgetCard title="Группы" className="lg:col-span-4">
-        <CountList items={groups} />
+        <CountList items={categoryCountItems('groups')} />
       </WidgetCard>
 
       <WidgetCard
@@ -94,7 +113,7 @@ export function TodayPage() {
         className="lg:col-span-4"
         footer="188 коров без ID в дойке — приоритет модуля 4.5"
       >
-        <CountList items={malfunctions} />
+        <CountList items={categoryCountItems('malfunctions')} />
       </WidgetCard>
     </div>
   )

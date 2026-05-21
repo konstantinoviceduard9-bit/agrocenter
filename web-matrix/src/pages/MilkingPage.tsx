@@ -1,6 +1,7 @@
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
-import { malfunctions, milkProduction } from '../data/matrixMocks'
+import { milkProduction } from '../data/matrixMocks'
+import { categoryCountItems } from '../data/cowLists'
 import { fmtDec, fmtInt, fmtPct } from '../lib/format'
 import { CountList } from '../components/CountList'
 
@@ -27,7 +28,7 @@ export function MilkingPage() {
           </dl>
         </WidgetCard>
         <WidgetCard title="Идентификация и метки">
-          <CountList items={malfunctions} />
+          <CountList items={categoryCountItems('malfunctions')} />
         </WidgetCard>
       </div>
     </>
