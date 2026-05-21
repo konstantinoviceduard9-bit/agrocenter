@@ -15,4 +15,15 @@ const base = normalizeBase(process.env.VITE_BASE_PATH)
 export default defineConfig({
   base,
   plugins: [react(), tailwindcss()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('recharts') || id.includes('d3-')) return 'recharts'
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) return 'react'
+          if (id.includes('node_modules/react-router')) return 'router'
+        },
+      },
+    },
+  },
 })
