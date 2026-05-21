@@ -195,6 +195,14 @@ export const animalCategories: AnimalCategory[] = [
     source: 'Afimilk · стадо',
   },
   {
+    id: 'barn-transfer',
+    label: 'Перевод по коровникам',
+    count: 12,
+    section: 'herd',
+    source: 'Afimilk · разделение',
+    hint: 'Списки на перевод между коровниками',
+  },
+  {
     id: 'milking-shift-cows',
     label: 'Доено в текущей дойке',
     count: 982,

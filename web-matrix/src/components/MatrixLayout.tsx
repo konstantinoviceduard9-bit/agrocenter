@@ -3,8 +3,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { MATRIX_COPY } from '../lib/appCopy'
 import { groupDashboardHref } from '../lib/dashboardLinks'
-import { countAllUnassigned } from '../data/barnAssignment'
-import { matrixNavSections, navLabelForPath, type MatrixNavLink } from '../lib/matrixNav'
+import { matrixNavSections, navLabelForPath } from '../lib/matrixNav'
 import { DataStrip } from './DataStrip'
 
 const navItem = ({ isActive }: { isActive: boolean }) =>
@@ -27,19 +26,10 @@ function MenuIcon({ open }: { open: boolean }) {
   )
 }
 
-function navBadge(link: MatrixNavLink): number | undefined {
-  if (link.to === '/barn-routing') {
-    const n = countAllUnassigned()
-    return n > 0 ? n : undefined
-  }
-  return link.badge
-}
-
 export function MatrixLayout() {
   const location = useLocation()
   const [navOpen, setNavOpen] = useState(false)
   const currentLabel = navLabelForPath(location.pathname)
-  const pendingBarn = countAllUnassigned()
 
   useEffect(() => {
     setNavOpen(false)

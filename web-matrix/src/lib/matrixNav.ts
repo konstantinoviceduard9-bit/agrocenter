@@ -1,3 +1,4 @@
+import { countAllUnassigned } from '../data/barnAssignment'
 import { vetTasks } from '../data/vetTasks'
 
 export type MatrixNavLink = {
@@ -25,7 +26,12 @@ export const matrixNavSections: MatrixNavSection[] = [
     heading: 'Стадо и кормление',
     links: [
       { to: '/tasks', label: 'Задачи ветслужбы', hint: 'Очередь, статусы, карточки', badge: vetTasks.length },
-      { to: '/barn-routing', label: 'Разделение по коровникам', hint: 'Кого куда перевести · сдал/принял' },
+      {
+        to: '/barn-assignment',
+        label: 'Разделение по коровникам',
+        hint: 'Кого куда перевести · Т-30, Т-35…',
+        badge: countAllUnassigned() || undefined,
+      },
       { to: '/feeding', label: 'Кормление · DTM', hint: 'Файлы, фото, сверка, Afimilk' },
     ],
   },

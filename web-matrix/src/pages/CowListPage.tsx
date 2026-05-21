@@ -90,7 +90,9 @@ export function CowListPage() {
   const back =
     categoryId === 'milking-shift-cows'
       ? { label: 'Дойка · текущая смена', to: '/milking' }
-      : (sectionBack[category.section] ?? { label: 'Сводка', to: '/' })
+      : categoryId === 'barn-transfer'
+        ? { label: 'Разделение по коровникам', to: '/barn-assignment' }
+        : (sectionBack[category.section] ?? { label: 'Сводка', to: '/' })
 
   return (
     <>
