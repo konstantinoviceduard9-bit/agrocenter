@@ -1,22 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { ManagerNotificationsPanel } from '../components/ManagerNotificationsPanel'
 import { TaskShareBanner } from '../components/TaskShareBanner'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
 import {
   loadLeadershipTasks,
   roleById,
+  saveLeadershipTasks,
   staffMembers,
   staffRoles,
   type LeadershipTask,
   type StaffMember,
   type StaffRoleId,
 } from '../data/staff'
+import { appendLeadershipTask, subscribeLeadershipTasks, type TaskSharePayload } from '../lib/leadershipTasks'
 import {
-  appendLeadershipTask,
-  subscribeLeadershipTasks,
-  type TaskSharePayload,
-} from '../lib/leadershipTasks'
+  decodeCompletionShare,
+  mergeCompletionFromShare,
+  tryShowCompletionNotification,
+} from '../lib/managerNotifications'
 
 function RoleBadge({ roleId }: { roleId: StaffRoleId }) {
   const r = roleById(roleId)
@@ -106,8 +109,43 @@ export function StaffPage() {
   const [tasks, setTasks] = useState(loadLeadershipTasks)
   const [assigner, setAssigner] = useState('Сафин А.Р.')
   const [sharePayload, setSharePayload] = useState<TaskSharePayload | null>(null)
+  const [completionImported, setCompletionImported] = useState<string | null>(null)
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
 
   useEffect(() => subscribeLeadershipTasks(() => setTasks(loadLeadershipTasks())), [])
+
+  useEffect(() => {
+    if (typeof Notification === 'undefined') return
+    if (Notification.permission === 'default') void Notification.requestPermission()
+  }, [])
+
+  useEffect(() => {
+    const encoded = searchParams.get('done')
+    if (!encoded) return
+    const payload = decodeCompletionShare(encoded)
+    if (payload) {
+      mergeCompletionFromShare(payload)
+      const synced = loadLeadershipTasks().map((t) =>
+        t.id === payload.taskId ? { ...t, status: 'done' as const } : t,
+      )
+      saveLeadershipTasks(synced)
+      setTasks(synced)
+      setCompletionImported(`${payload.employeeName}: ${payload.taskTitle}`)
+      void tryShowCompletionNotification({
+        id: 'import',
+        taskId: payload.taskId,
+        employeeId: payload.employeeId,
+        employeeName: payload.employeeName,
+        taskTitle: payload.taskTitle,
+        assignedBy: payload.assignedBy,
+        completedAt: payload.completedAt,
+        read: false,
+      })
+      setTimeout(() => setCompletionImported(null), 6000)
+    }
+    navigate('/staff', { replace: true })
+  }, [searchParams, navigate])
 
   const filtered = useMemo(() => {
     if (roleFilter === 'all') return staffMembers
@@ -146,6 +184,16 @@ export function StaffPage() {
       />
 
       {sharePayload ? <TaskShareBanner payload={sharePayload} onDismiss={() => setSharePayload(null)} /> : null}
+
+      {completionImported ? (
+        <p className="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-900">
+          Сотрудник отметил выполнение: {completionImported}
+        </p>
+      ) : null}
+
+      <WidgetCard title="Уведомления руководству" className="mb-4">
+        <ManagerNotificationsPanel />
+      </WidgetCard>
 
       <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
         <p className="font-semibold">Как задача попадёт на телефон (демо)</p>

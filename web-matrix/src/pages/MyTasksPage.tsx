@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { CompletionShareBanner } from '../components/CompletionShareBanner'
+import { ConfirmDialog } from '../components/ConfirmDialog'
 import { VetTaskQueue } from '../components/VetTaskQueue'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
@@ -12,6 +14,11 @@ import {
   subscribeLeadershipTasks,
   taskFromSharePayload,
 } from '../lib/leadershipTasks'
+import {
+  notifyManagerTaskCompleted,
+  tryShowCompletionNotification,
+  type CompletionSharePayload,
+} from '../lib/managerNotifications'
 
 type TaskStatus = LeadershipTask['status']
 
@@ -26,7 +33,7 @@ function LeadershipTaskRow({
   onStatus,
 }: {
   task: LeadershipTask
-  onStatus: (id: string, status: TaskStatus) => void
+  onStatus: (task: LeadershipTask, status: TaskStatus) => void
 }) {
   return (
     <li className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
@@ -39,7 +46,7 @@ function LeadershipTaskRow({
           <button
             key={s}
             type="button"
-            onClick={() => onStatus(task.id, s)}
+            onClick={() => onStatus(task, s)}
             className={[
               'matrix-touch-btn rounded-lg px-2 py-1 text-xs font-semibold',
               task.status === s ? 'bg-blue-700 text-white' : 'bg-slate-100 text-slate-700',
@@ -57,6 +64,8 @@ export function MyTasksPage() {
   const { employee, isLoggedIn } = useStaffAuth()
   const [tasks, setTasks] = useState(loadLeadershipTasks)
   const [importedTitle, setImportedTitle] = useState<string | null>(null)
+  const [confirmTask, setConfirmTask] = useState<LeadershipTask | null>(null)
+  const [completionShare, setCompletionShare] = useState<CompletionSharePayload | null>(null)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
@@ -88,10 +97,37 @@ export function MyTasksPage() {
 
   const openCount = mine.filter((t) => t.status !== 'done').length
 
-  const updateStatus = (id: string, status: TaskStatus) => {
+  const applyStatus = (id: string, status: TaskStatus) => {
     const updated = tasks.map((t) => (t.id === id ? { ...t, status } : t))
     setTasks(updated)
     saveLeadershipTasks(updated)
+    return updated.find((t) => t.id === id)
+  }
+
+  const requestStatus = (task: LeadershipTask, status: TaskStatus) => {
+    if (status === 'done' && task.status !== 'done') {
+      setConfirmTask(task)
+      return
+    }
+    applyStatus(task.id, status)
+  }
+
+  const confirmDone = () => {
+    if (!confirmTask || !employee) return
+    const doneTask = applyStatus(confirmTask.id, 'done')
+    if (doneTask) {
+      const note = notifyManagerTaskCompleted(doneTask, employee.name)
+      void tryShowCompletionNotification(note)
+      setCompletionShare({
+        taskId: doneTask.id,
+        employeeId: employee.id,
+        employeeName: employee.name,
+        taskTitle: doneTask.title,
+        assignedBy: doneTask.assignedBy,
+        completedAt: note.completedAt,
+      })
+    }
+    setConfirmTask(null)
   }
 
   const showVetQueue = employee?.roleId === 'vet'
@@ -137,13 +173,35 @@ export function MyTasksPage() {
         </p>
       ) : null}
 
+      {completionShare ? (
+        <CompletionShareBanner payload={completionShare} onDismiss={() => setCompletionShare(null)} />
+      ) : null}
+
+      <ConfirmDialog
+        open={confirmTask != null}
+        title="Подтвердить выполнение"
+        confirmLabel="Да, выполнено"
+        onConfirm={confirmDone}
+        onCancel={() => setConfirmTask(null)}
+      >
+        {confirmTask ? (
+          <>
+            Отметить задачу <strong>«{confirmTask.title}»</strong> выполненной?
+            <br />
+            <span className="mt-2 block text-xs text-slate-500">
+              Руководство ({confirmTask.assignedBy}) получит уведомление.
+            </span>
+          </>
+        ) : null}
+      </ConfirmDialog>
+
       <WidgetCard title="От руководства">
         {mine.length === 0 ? (
           <p className="text-sm text-slate-600">Пока нет назначений. Руководство добавляет их в разделе «Сотрудники».</p>
         ) : (
           <ul className="space-y-3">
             {mine.map((t) => (
-              <LeadershipTaskRow key={t.id} task={t} onStatus={updateStatus} />
+              <LeadershipTaskRow key={t.id} task={t} onStatus={requestStatus} />
             ))}
           </ul>
         )}
