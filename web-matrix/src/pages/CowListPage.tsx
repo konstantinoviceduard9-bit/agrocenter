@@ -87,7 +87,10 @@ export function CowListPage() {
   const totalPages = Math.max(1, Math.ceil(allCows.length / COW_LIST_PAGE_SIZE))
   const safePage = Math.min(page, totalPages - 1)
   const slice = allCows.slice(safePage * COW_LIST_PAGE_SIZE, (safePage + 1) * COW_LIST_PAGE_SIZE)
-  const back = sectionBack[category.section] ?? { label: 'Сводка', to: '/' }
+  const back =
+    categoryId === 'milking-shift-cows'
+      ? { label: 'Дойка · текущая смена', to: '/milking' }
+      : (sectionBack[category.section] ?? { label: 'Сводка', to: '/' })
 
   return (
     <>

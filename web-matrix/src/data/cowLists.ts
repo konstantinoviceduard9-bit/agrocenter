@@ -195,6 +195,14 @@ export const animalCategories: AnimalCategory[] = [
     source: 'Afimilk · стадо',
   },
   {
+    id: 'milking-shift-cows',
+    label: 'Доено в текущей дойке',
+    count: 982,
+    section: 'herd',
+    source: 'Afimilk',
+    hint: 'Коровы с записью надоя в дойке 3 (19:35)',
+  },
+  {
     id: 'herd-pregnant',
     label: 'Стельные / дойные',
     count: 558,
