@@ -42,8 +42,7 @@ export function FeedingPage() {
   const totals = useMemo(() => {
     const totalKg = dtmRows.reduce((s, r) => s + r.proposedKg, 0)
     const totalDm = dtmRows.reduce((s, r) => s + r.dmKg, 0)
-    const totalCost = dtmRows.reduce((s, r) => s + r.costRub, 0)
-    return { totalKg, totalDm, totalCost }
+    return { totalKg, totalDm }
   }, [dtmRows])
 
   return (
@@ -69,11 +68,10 @@ export function FeedingPage() {
         <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-500">
           Рецепт в DTM после подтверждения (предпросмотр)
         </h3>
-        <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { label: 'Общий вес, кг', value: fmtDec(totals.totalKg, 2) },
             { label: 'СВ, кг', value: fmtDec(totals.totalDm, 2) },
-            { label: 'Стоимость / корова, ₽', value: fmtDec(totals.totalCost, 2) },
             { label: 'Ревизия', value: `${batch.revision} · ${batch.revisionDate}` },
           ].map((k) => (
             <div
@@ -115,7 +113,6 @@ export function FeedingPage() {
                     <th className="px-2 py-2 text-right font-semibold">кг/корова</th>
                     <th className="px-2 py-2 text-right font-semibold">% СВ</th>
                     <th className="px-2 py-2 text-right font-semibold">СВ кг</th>
-                    <th className="px-2 py-2 text-right font-semibold">₽/корова</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -126,7 +123,6 @@ export function FeedingPage() {
                       <td className="px-2 py-1.5 text-right tabular-nums">{fmtDec(row.proposedKg, 1)}</td>
                       <td className="px-2 py-1.5 text-right tabular-nums">{fmtDec(row.dmPct, 0)}</td>
                       <td className="px-2 py-1.5 text-right tabular-nums">{fmtDec(row.dmKg, 1)}</td>
-                      <td className="px-2 py-1.5 text-right tabular-nums">{fmtDec(row.costRub, 1)}</td>
                     </tr>
                   ))}
                 </tbody>

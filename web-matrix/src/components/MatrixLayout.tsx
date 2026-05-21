@@ -3,21 +3,16 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { MATRIX_COPY } from '../lib/appCopy'
 import { groupDashboardHref } from '../lib/dashboardLinks'
+import { matrixNavSections, navLabelForPath } from '../lib/matrixNav'
 import { farmMeta } from '../data/matrixMocks'
 import { DataStrip } from './DataStrip'
 
 const navItem = ({ isActive }: { isActive: boolean }) =>
   [
-    'flex items-center gap-2 rounded px-2 py-1.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
-    isActive ? 'bg-blue-100 font-semibold text-blue-900' : 'text-slate-700 hover:bg-slate-100',
-  ].join(' ')
-
-const tabItem = ({ isActive }: { isActive: boolean }) =>
-  [
-    'rounded-t px-4 py-2 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+    'group flex flex-col gap-0.5 rounded-lg px-2.5 py-2 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-blue-400',
     isActive
-      ? 'border border-b-white border-slate-300 bg-white text-blue-800 -mb-px relative z-10'
-      : 'border border-transparent bg-slate-200/80 text-slate-600 hover:bg-slate-100',
+      ? 'border-l-[3px] border-blue-700 bg-blue-50 pl-[calc(0.625rem-3px)] font-semibold text-blue-900 shadow-sm'
+      : 'border-l-[3px] border-transparent text-slate-700 hover:bg-slate-100',
   ].join(' ')
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -32,32 +27,10 @@ function MenuIcon({ open }: { open: boolean }) {
   )
 }
 
-const sidebarSections: { heading: string; links: { to: string; end?: boolean; label: string }[] }[] = [
-  {
-    heading: 'Сегодня',
-    links: [
-      { to: '/', end: true, label: 'Пульт «Сегодня»' },
-      { to: '/milking', label: 'Дойка' },
-    ],
-  },
-  {
-    heading: 'Стадо и здоровье',
-    links: [
-      { to: '/tasks', label: 'Задачи ветслужбы' },
-      { to: '/feeding', label: 'Кормление (DTM)' },
-    ],
-  },
-  {
-    heading: 'Прочее',
-    links: [
-      { to: '/machines', label: 'Машины (Аксента)' },
-    ],
-  },
-]
-
 export function MatrixLayout() {
   const location = useLocation()
   const [navOpen, setNavOpen] = useState(false)
+  const currentLabel = navLabelForPath(location.pathname)
 
   useEffect(() => {
     setNavOpen(false)
@@ -83,6 +56,7 @@ export function MatrixLayout() {
                 {farmMeta.siteCode} · {farmMeta.afifarmVersion}
               </p>
               <h1 className="truncate text-base font-bold tracking-tight sm:text-lg">{MATRIX_COPY.farmName}</h1>
+              <p className="truncate text-[11px] text-blue-100/80 lg:hidden">{currentLabel}</p>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2 text-xs sm:text-sm">
@@ -95,23 +69,6 @@ export function MatrixLayout() {
             <span className="rounded bg-white/15 px-2 py-1 font-medium">Забиров Г.</span>
           </div>
         </div>
-        <nav className="flex gap-0.5 overflow-x-auto border-t border-blue-900/25 px-2 pb-0 pt-1" aria-label="Вкладки">
-          <NavLink to="/" end className={tabItem}>
-            Сегодня
-          </NavLink>
-          <NavLink to="/milking" className={tabItem}>
-            Дойка
-          </NavLink>
-          <NavLink to="/feeding" className={tabItem}>
-            Кормление
-          </NavLink>
-          <NavLink to="/tasks" className={tabItem}>
-            Задачи
-          </NavLink>
-          <NavLink to="/machines" className={tabItem}>
-            Машины
-          </NavLink>
-        </nav>
       </header>
 
       <DataStrip />
@@ -142,22 +99,43 @@ export function MatrixLayout() {
         <aside
           id="matrix-sidebar"
           className={[
-            'fixed inset-y-0 left-0 z-50 flex w-56 flex-col border-r border-slate-300 bg-[#f4f5f7] pt-[7.5rem] shadow-xl transition-transform lg:static lg:z-0 lg:w-52 lg:shrink-0 lg:translate-x-0 lg:pt-0 lg:shadow-none',
+            'fixed inset-y-0 left-0 z-50 flex w-[min(18rem,88vw)] flex-col border-r border-slate-300 bg-[#f4f5f7] shadow-xl transition-transform lg:static lg:z-0 lg:w-60 lg:shrink-0 lg:translate-x-0 lg:shadow-none',
             navOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           ].join(' ')}
+          style={{ top: navOpen ? 0 : undefined }}
         >
-          <nav className="flex-1 overflow-y-auto p-2 text-sm">
-            {sidebarSections.map((sec) => (
-              <div key={sec.heading} className="mb-3">
-                <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-500">{sec.heading}</p>
-                {sec.links.map((link) => (
-                  <NavLink key={link.to} to={link.to} end={link.end} className={navItem} onClick={() => setNavOpen(false)}>
-                    {link.label}
-                  </NavLink>
-                ))}
+          <div className="border-b border-slate-200 bg-white/80 px-3 py-3 lg:py-4">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Раздел</p>
+            <p className="mt-0.5 text-sm font-bold text-slate-800">{currentLabel}</p>
+          </div>
+
+          <nav className="flex-1 overflow-y-auto p-2 text-sm" aria-label="Навигация по пульту">
+            {matrixNavSections.map((sec) => (
+              <div key={sec.heading} className="mb-4">
+                <p className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">{sec.heading}</p>
+                <ul className="space-y-0.5">
+                  {sec.links.map((link) => (
+                    <li key={link.to}>
+                      <NavLink to={link.to} end={link.end} className={navItem} onClick={() => setNavOpen(false)}>
+                        <span className="flex items-center justify-between gap-2">
+                          <span>{link.label}</span>
+                          {link.badge != null && link.badge > 0 ? (
+                            <span className="rounded-full bg-blue-700 px-1.5 py-0.5 text-[10px] font-bold text-white tabular-nums">
+                              {link.badge}
+                            </span>
+                          ) : null}
+                        </span>
+                        <span className="text-[11px] font-normal leading-snug text-slate-500 group-hover:text-slate-600">
+                          {link.hint}
+                        </span>
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </nav>
+
           <p className="border-t border-slate-300 px-3 py-2 text-[10px] leading-snug text-slate-500">{MATRIX_COPY.lastSync}</p>
         </aside>
 
