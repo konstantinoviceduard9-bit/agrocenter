@@ -11,6 +11,7 @@ import {
   type LabIndicator,
   type PipelineState,
 } from '../data/feedingPipeline'
+import { loadZootech, saveZootech, zootechnicians } from '../data/vetStaff'
 import { fmtDec } from '../lib/format'
 
 const flagClass = {
@@ -96,7 +97,7 @@ type Props = {
 export function FeedingPipelinePanel({ labRows, amtsRows, dtmRows }: Props) {
   const batch = demoBatch
   const [state, setState] = useState<PipelineState>(() => loadPipelineState(batch.id))
-  const [zootech, setZootech] = useState(() => localStorage.getItem('matrix-zootech-name') ?? '')
+  const [zootech, setZootech] = useState(loadZootech)
   const [checked, setChecked] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(dtmRows.map((r) => [r.code, true])),
   )
@@ -120,7 +121,7 @@ export function FeedingPipelinePanel({ labRows, amtsRows, dtmRows }: Props) {
 
   const confirm = () => {
     if (!zootech.trim()) return
-    localStorage.setItem('matrix-zootech-name', zootech.trim())
+    saveZootech(zootech.trim())
     persist({
       ...state,
       status: 'confirmed',
@@ -257,13 +258,25 @@ export function FeedingPipelinePanel({ labRows, amtsRows, dtmRows }: Props) {
 
         <div className="mt-4 grid gap-3 border-t border-slate-200 pt-4 sm:grid-cols-2">
           <div>
-            <label className="text-xs font-semibold text-slate-600">Зоотехник (подтверждение)</label>
-            <input
+            <label htmlFor="feeding-zootech" className="text-xs font-semibold text-slate-600">
+              Зоотехник (подтверждение)
+            </label>
+            <select
+              id="feeding-zootech"
               value={zootech}
-              onChange={(e) => setZootech(e.target.value)}
-              placeholder="Фамилия И.О."
-              className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm"
-            />
+              onChange={(e) => {
+                setZootech(e.target.value)
+                saveZootech(e.target.value)
+              }}
+              className="matrix-touch-input mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 font-medium text-slate-900"
+            >
+              <option value="">Выберите зоотехника…</option>
+              {zootechnicians.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-600">Комментарий</label>

@@ -8,6 +8,18 @@ export const veterinarians = [
   'Хабибуллин М.Ф.',
 ] as const
 
+/** Зоотехники / подтверждение рациона (кормление · DTM) */
+export const zootechnicians = [
+  'Забиров Г.И.',
+  'Кузнецов П.С.',
+  'Ямалетдинов И.Р.',
+  'Валеев Р.Н.',
+  'Гарифуллин А.Х.',
+  'Мухаметшин Р.А.',
+  'Сафин А.Р.',
+  'Хабибуллин М.Ф.',
+] as const
+
 /** Принимающие по коровнику — зоотехники и старшие по секциям */
 export const barnReceivers = [
   'Кузнецов П.С.',
@@ -23,6 +35,23 @@ export type BarnReceiverName = (typeof barnReceivers)[number]
 
 const LAST_VET_HANDOVER_KEY = 'matrix-barn-last-vet-handover'
 const ACTIVE_VET_KEY = 'matrix-active-vet'
+const ZOOTECH_KEY = 'matrix-zootech-name'
+
+export function loadZootech(): string {
+  try {
+    const saved = localStorage.getItem(ZOOTECH_KEY)
+    if (saved && (zootechnicians as readonly string[]).includes(saved)) return saved
+  } catch {
+    /* ignore */
+  }
+  const active = loadActiveVet()
+  if ((zootechnicians as readonly string[]).includes(active)) return active
+  return zootechnicians[0]
+}
+
+export function saveZootech(name: string) {
+  localStorage.setItem(ZOOTECH_KEY, name)
+}
 
 export function loadActiveVet(): string {
   try {
