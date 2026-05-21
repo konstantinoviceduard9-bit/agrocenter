@@ -208,8 +208,7 @@ export function StaffPage() {
       </WidgetCard>
 
       <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-        <strong>Демо-вход:</strong> у сотрудников с доступом к приложению PIN в карточке (например доярка Ямалетдинов —{' '}
-        <code className="font-mono">1020</code>).{' '}
+        <strong>Демо-вход:</strong> PIN <code className="font-mono">1</code> у всех — на странице входа выберите сотрудника из списка.{' '}
         <Link to="/login" className="font-medium text-blue-700 hover:underline">
           Войти как сотрудник →
         </Link>

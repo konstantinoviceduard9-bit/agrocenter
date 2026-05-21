@@ -41,7 +41,7 @@ export type StaffMember = {
   shift: string
   active: boolean
   hasAppAccess: boolean
-  /** Демо-PIN для входа в приложение (4 цифры). */
+  /** Демо-PIN (пока один на всех — `1`). */
   pin: string
 }
 
@@ -56,18 +56,18 @@ export type LeadershipTask = {
 }
 
 export const staffMembers: StaffMember[] = [
-  { id: 'e1', name: 'Забиров Г.И.', roleId: 'vet', phone: '+7 *** *** 12-01', shift: 'День', active: true, hasAppAccess: true, pin: '1001' },
-  { id: 'e2', name: 'Мухаметшин Р.А.', roleId: 'vet', phone: '+7 *** *** 12-02', shift: 'Ночь', active: true, hasAppAccess: true, pin: '1002' },
-  { id: 'e3', name: 'Кузнецов П.С.', roleId: 'zootech', phone: '+7 *** *** 12-10', shift: 'День', active: true, hasAppAccess: true, pin: '1010' },
-  { id: 'e4', name: 'Ямалетдинов И.Р.', roleId: 'milker', phone: '+7 *** *** 12-20', shift: 'Утро', active: true, hasAppAccess: true, pin: '1020' },
-  { id: 'e5', name: 'Валеев Р.Н.', roleId: 'milker', phone: '+7 *** *** 12-21', shift: 'Вечер', active: true, hasAppAccess: true, pin: '1021' },
-  { id: 'e6', name: 'Гарифуллин А.Х.', roleId: 'driver', phone: '+7 *** *** 12-30', shift: 'День', active: true, hasAppAccess: true, pin: '1030' },
-  { id: 'e7', name: 'Петров С.В.', roleId: 'mechanic', phone: '+7 *** *** 12-40', shift: 'День', active: true, hasAppAccess: false, pin: '1040' },
-  { id: 'e8', name: 'Сидоров К.М.', roleId: 'security', phone: '+7 *** *** 12-50', shift: 'Сутки', active: true, hasAppAccess: true, pin: '1050' },
-  { id: 'e9', name: 'Иванова М.П.', roleId: 'agronomist', phone: '+7 *** *** 12-60', shift: 'День', active: true, hasAppAccess: true, pin: '1060' },
-  { id: 'e10', name: 'Сафин А.Р.', roleId: 'manager', phone: '+7 *** *** 12-70', shift: 'День', active: true, hasAppAccess: true, pin: '1070' },
-  { id: 'e11', name: 'Нуриахметов Д.Ф.', roleId: 'driver', phone: '+7 *** *** 12-31', shift: 'Ночь', active: false, hasAppAccess: false, pin: '1031' },
-  { id: 'e12', name: 'Хабибуллин М.Ф.', roleId: 'admin', phone: '+7 *** *** 12-99', shift: 'Офис', active: true, hasAppAccess: true, pin: '1099' },
+  { id: 'e1', name: 'Забиров Г.И.', roleId: 'vet', phone: '+7 *** *** 12-01', shift: 'День', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e2', name: 'Мухаметшин Р.А.', roleId: 'vet', phone: '+7 *** *** 12-02', shift: 'Ночь', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e3', name: 'Кузнецов П.С.', roleId: 'zootech', phone: '+7 *** *** 12-10', shift: 'День', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e4', name: 'Ямалетдинов И.Р.', roleId: 'milker', phone: '+7 *** *** 12-20', shift: 'Утро', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e5', name: 'Валеев Р.Н.', roleId: 'milker', phone: '+7 *** *** 12-21', shift: 'Вечер', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e6', name: 'Гарифуллин А.Х.', roleId: 'driver', phone: '+7 *** *** 12-30', shift: 'День', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e7', name: 'Петров С.В.', roleId: 'mechanic', phone: '+7 *** *** 12-40', shift: 'День', active: true, hasAppAccess: false, pin: '1' },
+  { id: 'e8', name: 'Сидоров К.М.', roleId: 'security', phone: '+7 *** *** 12-50', shift: 'Сутки', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e9', name: 'Иванова М.П.', roleId: 'agronomist', phone: '+7 *** *** 12-60', shift: 'День', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e10', name: 'Сафин А.Р.', roleId: 'manager', phone: '+7 *** *** 12-70', shift: 'День', active: true, hasAppAccess: true, pin: '1' },
+  { id: 'e11', name: 'Нуриахметов Д.Ф.', roleId: 'driver', phone: '+7 *** *** 12-31', shift: 'Ночь', active: false, hasAppAccess: false, pin: '1' },
+  { id: 'e12', name: 'Хабибуллин М.Ф.', roleId: 'admin', phone: '+7 *** *** 12-99', shift: 'Офис', active: true, hasAppAccess: true, pin: '1' },
 ]
 
 export function staffMemberById(id: string): StaffMember | undefined {

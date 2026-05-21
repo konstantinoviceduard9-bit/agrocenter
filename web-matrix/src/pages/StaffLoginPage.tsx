@@ -13,8 +13,8 @@ export function StaffLoginPage() {
     if (isLoggedIn) navigate('/my-tasks', { replace: true })
   }, [isLoggedIn, navigate])
 
-  const tryLogin = (value: string) => {
-    const result = login(value)
+  const tryLogin = (value: string, employeeId?: string) => {
+    const result = login(value, employeeId)
     if (result.ok) {
       setError(null)
       navigate('/my-tasks', { replace: true })
@@ -29,7 +29,7 @@ export function StaffLoginPage() {
     <div className="mx-auto flex min-h-[70dvh] max-w-md flex-col justify-center px-2 py-6">
       <h1 className="text-xl font-bold text-slate-900">Вход сотрудника</h1>
       <p className="mt-2 text-sm text-slate-600">
-        Демо: PIN из 4 цифр. После входа — только разделы вашей роли и{' '}
+        Демо: PIN <strong>1</strong> у всех. Нажмите на своё имя в списке ниже. После входа — только разделы вашей роли и{' '}
         <strong>«Мои задачи»</strong> от руководства.
       </p>
 
@@ -42,16 +42,16 @@ export function StaffLoginPage() {
         value={pin}
         onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && pin.length === 4) tryLogin(pin)
+          if (e.key === 'Enter' && pin.length >= 1) tryLogin(pin)
         }}
-        placeholder="••••"
+        placeholder="1"
         className="matrix-touch-input mt-1 w-full rounded-xl border border-slate-300 px-4 py-3 text-center text-2xl font-bold tracking-[0.4em]"
       />
       {error ? <p className="mt-2 text-sm font-medium text-red-700">{error}</p> : null}
 
       <button
         type="button"
-        disabled={pin.length < 4}
+        disabled={pin.length < 1}
         onClick={() => tryLogin(pin)}
         className="matrix-touch-btn mt-4 w-full rounded-xl bg-blue-700 py-3 text-base font-bold text-white hover:bg-blue-800 disabled:opacity-40"
       >
@@ -66,7 +66,7 @@ export function StaffLoginPage() {
             <li key={m.id}>
               <button
                 type="button"
-                onClick={() => tryLogin(m.pin)}
+                onClick={() => tryLogin(m.pin, m.id)}
                 className="matrix-touch-btn w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-left shadow-sm hover:border-blue-300 hover:bg-blue-50"
               >
                 <span className="font-semibold text-slate-900">{m.name}</span>

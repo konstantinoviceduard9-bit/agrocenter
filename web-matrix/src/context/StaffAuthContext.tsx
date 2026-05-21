@@ -22,7 +22,7 @@ type StaffAuthContextValue = {
   employee: StaffMember | null
   isLoggedIn: boolean
   isRestricted: boolean
-  login: (pin: string) => { ok: true } | { ok: false; message: string }
+  login: (pin: string, employeeId?: string) => { ok: true } | { ok: false; message: string }
   logout: () => void
 }
 
@@ -36,12 +36,23 @@ export function StaffAuthProvider({ children }: { children: ReactNode }) {
     [session],
   )
 
-  const login = useCallback((pin: string) => {
+  const login = useCallback((pin: string, employeeId?: string) => {
     const normalized = pin.replace(/\D/g, '').trim()
-    if (normalized.length < 4) {
-      return { ok: false as const, message: 'Введите PIN из 4 цифр' }
+    if (!normalized) {
+      return { ok: false as const, message: 'Введите PIN' }
     }
-    const match = staffMembers.find((m) => m.pin === normalized && m.active && m.hasAppAccess)
+    let match: (typeof staffMembers)[number] | undefined
+    if (employeeId) {
+      match = staffMembers.find(
+        (m) => m.id === employeeId && m.pin === normalized && m.active && m.hasAppAccess,
+      )
+    } else {
+      const matches = staffMembers.filter((m) => m.pin === normalized && m.active && m.hasAppAccess)
+      if (matches.length > 1) {
+        return { ok: false as const, message: 'Общий PIN — выберите себя в списке ниже' }
+      }
+      match = matches[0]
+    }
     if (!match) {
       return { ok: false as const, message: 'Неверный PIN или нет доступа к приложению' }
     }
