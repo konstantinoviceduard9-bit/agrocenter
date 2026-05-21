@@ -5,6 +5,7 @@ import { MilkingPage } from './pages/MilkingPage'
 import { FeedingPage } from './pages/FeedingPage'
 import { TasksPage } from './pages/TasksPage'
 import { MachinesPage } from './pages/MachinesPage'
+import { BarnRoutingPage } from './pages/BarnRoutingPage'
 import { CowListPage } from './pages/CowListPage'
 import { CowDetailPage } from './pages/CowDetailPage'
 
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="milking" element={<MilkingPage />} />
           <Route path="feeding" element={<FeedingPage />} />
           <Route path="tasks" element={<TasksPage />} />
+          <Route path="barn-routing" element={<BarnRoutingPage />} />
           <Route path="machines" element={<MachinesPage />} />
           <Route path="animals/:categoryId/cow/:cowNumber" element={<CowDetailPage />} />
           <Route path="animals/:categoryId" element={<CowListPage />} />
