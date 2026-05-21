@@ -62,8 +62,8 @@ jobs:
           test -f web/dist/matrix/index.html
           grep -qF "/${{ github.event.repository.name }}/matrix/assets/" web/dist/matrix/index.html
 
-      - name: SPA fallback (GitHub Pages 404)
-        run: cp web/dist/index.html web/dist/404.html
+      - name: SPA fallback (GitHub Pages 404 — группа + /matrix/)
+        run: node scripts/github-pages-404.mjs "${{ github.event.repository.name }}" web/dist
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

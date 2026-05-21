@@ -25,7 +25,10 @@ npm run check
 | URL | Приложение |
 |-----|------------|
 | `https://<user>.github.io/<repo>/` | Групповой дашборд (`web/`) |
-| `https://<user>.github.io/<repo>/matrix/` | Пульт Матрикс (`web-matrix/`) |
+| `https://<user>.github.io/<repo>/matrix/` | Пульт Матрикс (`web-matrix/`) — вход |
+| `https://<user>.github.io/<repo>/matrix/tasks` | Задачи ветслужбы (и другие вложенные пути) |
+
+**Важно:** не путать с `https://<user>.github.io/<repo>/` — это **дашборд группы** (выручка, юрлица). Матрикс только в `/matrix/`.
 
 Workflow `.github/workflows/deploy-github-pages.yml` собирает оба проекта и кладёт `web-matrix/dist` в `web/dist/matrix/`.
 
