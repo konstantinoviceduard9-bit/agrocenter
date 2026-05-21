@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { PageTitle } from '../components/MatrixLayout'
+import { cowDetailPath } from '../data/cowDetail'
 import {
   COW_LIST_PAGE_SIZE,
   getCategoryById,
@@ -18,7 +19,7 @@ const sectionBack: Record<string, { label: string; to: string }> = {
   herd: { label: 'Сводка · Стадо', to: '/' },
 }
 
-function CowTable({ rows }: { rows: CowRecord[] }) {
+function CowTable({ rows, categoryId }: { rows: CowRecord[]; categoryId: string }) {
   return (
     <div className="overflow-x-auto rounded border border-slate-300 bg-white">
       <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
@@ -36,7 +37,14 @@ function CowTable({ rows }: { rows: CowRecord[] }) {
         <tbody>
           {rows.map((row) => (
             <tr key={`${row.number}-${row.barn}`} className="border-b border-slate-100 hover:bg-blue-50/50">
-              <td className="px-3 py-2 font-semibold tabular-nums text-blue-900">{row.number}</td>
+              <td className="px-3 py-2 font-semibold tabular-nums">
+                <Link
+                  to={cowDetailPath(categoryId, row.number)}
+                  className="text-blue-800 hover:underline"
+                >
+                  {row.number}
+                </Link>
+              </td>
               <td className="px-3 py-2 text-slate-800">{row.barn}</td>
               <td className="px-3 py-2 text-slate-700">{row.group}</td>
               <td className="px-3 py-2 text-right tabular-nums">{row.lactation}</td>
@@ -109,7 +117,7 @@ export function CowListPage() {
         </span>
       </div>
 
-      <CowTable rows={slice} />
+      <CowTable rows={slice} categoryId={categoryId!} />
 
       {totalPages > 1 ? (
         <div className="mt-4 flex items-center justify-center gap-2">
