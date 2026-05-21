@@ -16,6 +16,7 @@ import {
 } from '../data/barnAssignment'
 import { cowDetailPath } from '../data/cowDetail'
 import { farmMeta } from '../data/matrixMocks'
+import { saveLastVetHandover, veterinarians } from '../data/vetStaff'
 import { fmtDec, fmtInt } from '../lib/format'
 
 type Filter = 'all' | 'pending' | 'done'
@@ -152,8 +153,12 @@ export function BarnAssignmentPage() {
       confirmedAt: new Date().toLocaleString('ru-RU'),
     }
     saveHandover(next)
+    saveLastVetHandover(handover.handedBy, handover.receivedBy)
     setState((s) => ({ ...s, handover: next }))
   }
+
+  const selectClass =
+    'mt-1 w-full rounded border border-slate-300 bg-white px-2 py-1.5 text-sm font-medium text-slate-900'
 
   return (
     <>
@@ -246,30 +251,48 @@ export function BarnAssignmentPage() {
       <WidgetCard title="Передача списка (как на бланке)" className="mt-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="text-xs font-semibold text-slate-600">Сдал (ветслужба)</label>
-            <input
+            <label htmlFor="handover-vet" className="text-xs font-semibold text-slate-600">
+              Сдал (ветслужба)
+            </label>
+            <select
+              id="handover-vet"
               value={handover.handedBy}
               onChange={(e) => {
                 const next = { ...handover, handedBy: e.target.value, confirmedAt: null }
                 saveHandover(next)
                 setState((s) => ({ ...s, handover: next }))
               }}
-              placeholder="Фамилия И.О."
-              className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm"
-            />
+              className={selectClass}
+            >
+              <option value="">Выберите ветеринара…</option>
+              {veterinarians.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
-            <label className="text-xs font-semibold text-slate-600">Принял (по коровнику)</label>
-            <input
+            <label htmlFor="handover-receiver" className="text-xs font-semibold text-slate-600">
+              Принял (по коровнику)
+            </label>
+            <select
+              id="handover-receiver"
               value={handover.receivedBy}
               onChange={(e) => {
                 const next = { ...handover, receivedBy: e.target.value, confirmedAt: null }
                 saveHandover(next)
                 setState((s) => ({ ...s, handover: next }))
               }}
-              placeholder="Фамилия И.О."
-              className="mt-1 w-full rounded border border-slate-300 px-2 py-1.5 text-sm"
-            />
+              className={selectClass}
+            >
+              <option value="">Выберите ветеринара…</option>
+              {veterinarians.map((name) => (
+                <option key={`recv-${name}`} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <button

@@ -1,0 +1,38 @@
+/** Справочник ветслужбы Матрикс (демо). */
+
+export const veterinarians = [
+  'Забиров Г.И.',
+  'Мухаметшин Р.А.',
+  'Ибрагимов Т.В.',
+  'Сафин А.Р.',
+  'Хабибуллин М.Ф.',
+] as const
+
+/** Принимающие по коровнику — зоотехники и старшие по секциям */
+export const barnReceivers = [
+  'Кузнецов П.С.',
+  'Ямалетдинов И.Р.',
+  'Валеев Р.Н.',
+  'Гарифуллин А.Х.',
+  'Мухаметшин Р.А.',
+  'Сафин А.Р.',
+] as const
+
+export type VeterinarianName = (typeof veterinarians)[number]
+export type BarnReceiverName = (typeof barnReceivers)[number]
+
+const LAST_VET_HANDOVER_KEY = 'matrix-barn-last-vet-handover'
+
+export function loadLastVetHandover(): { handedBy: string; receivedBy: string } {
+  try {
+    const raw = localStorage.getItem(LAST_VET_HANDOVER_KEY)
+    if (!raw) return { handedBy: veterinarians[0], receivedBy: '' }
+    return JSON.parse(raw) as { handedBy: string; receivedBy: string }
+  } catch {
+    return { handedBy: veterinarians[0], receivedBy: '' }
+  }
+}
+
+export function saveLastVetHandover(handedBy: string, receivedBy: string) {
+  localStorage.setItem(LAST_VET_HANDOVER_KEY, JSON.stringify({ handedBy, receivedBy }))
+}

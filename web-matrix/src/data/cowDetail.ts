@@ -1,4 +1,5 @@
 import { getCategoryById, getCowsForCategory, type CowRecord } from './cowLists'
+import { veterinarians } from './vetStaff'
 import { findVetTaskSummary } from './vetTasks'
 
 function hash(s: string): number {
@@ -76,8 +77,6 @@ const DRUGS = [
   { drug: 'Пенстреп', dose: '6 мл', route: 'в/м' },
 ]
 
-const VETS = ['Мухаметшин Р.А.', 'Ибрагимов Т.В.', 'Сафин А.Р.']
-
 function padDate(d: Date): string {
   return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
@@ -114,7 +113,7 @@ export function buildCowDetail(categoryId: string, cowNumber: string): CowDetail
       drug: pick.drug,
       dose: pick.dose,
       route: pick.route,
-      vet: VETS[(seed + i) % VETS.length]!,
+      vet: veterinarians[(seed + i) % veterinarians.length]!,
       reason: i === 0 ? category.label : 'Профилактика / контроль',
     }
   })
