@@ -1,17 +1,22 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { TaskShareBanner } from '../components/TaskShareBanner'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
 import {
   loadLeadershipTasks,
   roleById,
-  saveLeadershipTasks,
   staffMembers,
   staffRoles,
   type LeadershipTask,
   type StaffMember,
   type StaffRoleId,
 } from '../data/staff'
+import {
+  appendLeadershipTask,
+  subscribeLeadershipTasks,
+  type TaskSharePayload,
+} from '../lib/leadershipTasks'
 
 function RoleBadge({ roleId }: { roleId: StaffRoleId }) {
   const r = roleById(roleId)
@@ -100,6 +105,9 @@ export function StaffPage() {
   const [roleFilter, setRoleFilter] = useState<StaffRoleId | 'all'>('all')
   const [tasks, setTasks] = useState(loadLeadershipTasks)
   const [assigner, setAssigner] = useState('Сафин А.Р.')
+  const [sharePayload, setSharePayload] = useState<TaskSharePayload | null>(null)
+
+  useEffect(() => subscribeLeadershipTasks(() => setTasks(loadLeadershipTasks())), [])
 
   const filtered = useMemo(() => {
     if (roleFilter === 'all') return staffMembers
@@ -116,18 +124,18 @@ export function StaffPage() {
   }, [])
 
   const assignTask = (employeeId: string, title: string) => {
+    const dueDate = new Date().toLocaleDateString('ru-RU')
     const next: LeadershipTask = {
       id: `lt-${Date.now()}`,
       employeeId,
       title,
       assignedBy: assigner,
-      dueDate: new Date().toLocaleDateString('ru-RU'),
+      dueDate,
       status: 'open',
       createdAt: new Date().toLocaleString('ru-RU'),
     }
-    const updated = [next, ...tasks]
-    setTasks(updated)
-    saveLeadershipTasks(updated)
+    setTasks(appendLeadershipTask(next))
+    setSharePayload({ employeeId, title, assignedBy: assigner, dueDate })
   }
 
   return (
@@ -137,13 +145,20 @@ export function StaffPage() {
         subtitle="Реестр персонала фермы: доярки, ветеринары, водители и др. Руководство назначает задачи — в мобильном приложении сотрудник увидит только свои (следующий этап)."
       />
 
-      <div className="mb-4 rounded-xl border border-indigo-200 bg-indigo-50/80 px-4 py-3 text-sm text-indigo-950">
-        <p className="font-semibold">Android и Apple — план</p>
-        <p className="mt-1 text-xs leading-relaxed text-indigo-900/90">
-          Сейчас: мобильный пульт в браузере (PWA). Далее: обёртка <strong>Capacitor</strong> → приложение в Google Play и App Store с
-          входом по сотруднику и меню по роли. Подробнее:{' '}
-          <code className="rounded bg-white/60 px-1 text-[11px]">docs/neral-staff-roles-and-mobile.md</code>
-        </p>
+      {sharePayload ? <TaskShareBanner payload={sharePayload} onDismiss={() => setSharePayload(null)} /> : null}
+
+      <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+        <p className="font-semibold">Как задача попадёт на телефон (демо)</p>
+        <ul className="mt-1 list-disc space-y-1 pl-5 text-xs leading-relaxed">
+          <li>
+            <strong>Один телефон:</strong> назначайте здесь же в приложении «Матрикс» — сотрудник сразу увидит в «Мои задачи».
+          </li>
+          <li>
+            <strong>Компьютер → телефон:</strong> после «Назначить» нажмите <strong>«Отправить ссылку»</strong> (WhatsApp / Telegram) —
+            сотрудник откроет её на телефоне.
+          </li>
+          <li>Сервер и push — следующий этап (задачи без ссылки).</li>
+        </ul>
       </div>
 
       <WidgetCard title="Роли на ферме">

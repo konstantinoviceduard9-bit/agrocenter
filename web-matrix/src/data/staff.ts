@@ -74,51 +74,7 @@ export function staffMemberById(id: string): StaffMember | undefined {
   return staffMembers.find((m) => m.id === id)
 }
 
-const defaultTasks: LeadershipTask[] = [
-  {
-    id: 'lt1',
-    employeeId: 'e4',
-    title: 'Проверить идентификацию в дойке 3',
-    assignedBy: 'Сафин А.Р.',
-    dueDate: '21.05.2026',
-    status: 'open',
-    createdAt: '21.05.2026 08:00',
-  },
-  {
-    id: 'lt2',
-    employeeId: 'e1',
-    title: 'Осмотр новотельных · корпус 7',
-    assignedBy: 'Сафин А.Р.',
-    dueDate: '21.05.2026',
-    status: 'in_progress',
-    createdAt: '21.05.2026 07:30',
-  },
-  {
-    id: 'lt3',
-    employeeId: 'e6',
-    title: 'Доставка силоса · маршрут Т-2',
-    assignedBy: 'Сафин А.Р.',
-    dueDate: '21.05.2026',
-    status: 'open',
-    createdAt: '21.05.2026 06:00',
-  },
-]
-
-const TASKS_KEY = 'matrix-leadership-tasks-v1'
-
-export function loadLeadershipTasks(): LeadershipTask[] {
-  try {
-    const raw = localStorage.getItem(TASKS_KEY)
-    if (!raw) return [...defaultTasks]
-    return JSON.parse(raw) as LeadershipTask[]
-  } catch {
-    return [...defaultTasks]
-  }
-}
-
-export function saveLeadershipTasks(tasks: LeadershipTask[]) {
-  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks))
-}
+export { loadLeadershipTasks, saveLeadershipTasks } from '../lib/leadershipTasks'
 
 export function roleById(id: StaffRoleId): StaffRole {
   return staffRoles.find((r) => r.id === id) ?? staffRoles[0]!

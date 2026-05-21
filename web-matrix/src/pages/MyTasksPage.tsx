@@ -1,15 +1,17 @@
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { VetTaskQueue } from '../components/VetTaskQueue'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
 import { useStaffAuth } from '../context/StaffAuthContext'
+import { loadLeadershipTasks, roleById, type LeadershipTask } from '../data/staff'
 import {
-  loadLeadershipTasks,
-  roleById,
+  decodeTaskShare,
+  mergeLeadershipTask,
   saveLeadershipTasks,
-  type LeadershipTask,
-} from '../data/staff'
+  subscribeLeadershipTasks,
+  taskFromSharePayload,
+} from '../lib/leadershipTasks'
 
 type TaskStatus = LeadershipTask['status']
 
@@ -54,10 +56,34 @@ function LeadershipTaskRow({
 export function MyTasksPage() {
   const { employee, isLoggedIn } = useStaffAuth()
   const [tasks, setTasks] = useState(loadLeadershipTasks)
+  const [importedTitle, setImportedTitle] = useState<string | null>(null)
+  const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
+
+  useEffect(() => subscribeLeadershipTasks(() => setTasks(loadLeadershipTasks())), [])
+
+  useEffect(() => {
+    const encoded = searchParams.get('add')
+    if (!encoded) return
+    const payload = decodeTaskShare(encoded)
+    if (payload) {
+      const task = taskFromSharePayload(payload)
+      mergeLeadershipTask(task)
+      setTasks(loadLeadershipTasks())
+      setImportedTitle(task.title)
+      setTimeout(() => setImportedTitle(null), 5000)
+    }
+    navigate('/my-tasks', { replace: true })
+  }, [searchParams, navigate])
 
   const mine = useMemo(() => {
     if (!employee) return []
-    return tasks.filter((t) => t.employeeId === employee.id)
+    const list = tasks.filter((t) => t.employeeId === employee.id)
+    return [...list].sort((a, b) => {
+      if (a.status === 'done' && b.status !== 'done') return 1
+      if (b.status === 'done' && a.status !== 'done') return -1
+      return 0
+    })
   }, [tasks, employee])
 
   const openCount = mine.filter((t) => t.status !== 'done').length
@@ -104,6 +130,12 @@ export function MyTasksPage() {
           </>
         }
       />
+
+      {importedTitle ? (
+        <p className="mb-3 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-900">
+          Получена новая задача: {importedTitle}
+        </p>
+      ) : null}
 
       <WidgetCard title="От руководства">
         {mine.length === 0 ? (
