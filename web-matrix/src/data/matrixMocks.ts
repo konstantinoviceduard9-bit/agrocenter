@@ -79,6 +79,7 @@ export const feedingKpi = {
   mixingSec: 0,
 } as const
 
+/** @deprecated Используйте axentaMachines из machinesAxenta.ts */
 export const machines = [
   { name: 'Силокинг', status: 'На маршруте · кормление', lat: 54.12, lng: 55.98 },
   { name: 'Погрузчик FEL-2', status: 'Стоит · кормоцех', lat: 54.11, lng: 55.97 },
