@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { PageTitle } from '../components/MatrixLayout'
+import { TableScroll } from '../components/TableScroll'
 import { cowDetailPath } from '../data/cowDetail'
 import {
   COW_LIST_PAGE_SIZE,
@@ -19,9 +20,35 @@ const sectionBack: Record<string, { label: string; to: string }> = {
   herd: { label: 'Сводка · Стадо', to: '/' },
 }
 
+function CowMobileList({ rows, categoryId }: { rows: CowRecord[]; categoryId: string }) {
+  return (
+    <ul className="space-y-2 md:hidden">
+      {rows.map((row) => (
+        <li key={`${row.number}-${row.barn}`}>
+          <Link
+            to={cowDetailPath(categoryId, row.number)}
+            className="block rounded-xl border border-slate-200 bg-white p-3 shadow-sm active:bg-blue-50"
+          >
+            <p className="text-lg font-bold tabular-nums text-blue-800">{row.number}</p>
+            <p className="mt-1 text-sm text-slate-700">
+              {row.barn} · {row.group}
+            </p>
+            <p className="mt-1 text-xs text-slate-500">
+              Лакт. {row.lactation}
+              {row.daysInMilk != null ? ` · DIM ${fmtInt(row.daysInMilk)}` : ''}
+              {row.yieldLiters != null ? ` · ${fmtDec(row.yieldLiters, 1)} л` : ''}
+            </p>
+            <p className="mt-1 text-xs text-slate-600">{row.note}</p>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 function CowTable({ rows, categoryId }: { rows: CowRecord[]; categoryId: string }) {
   return (
-    <div className="overflow-x-auto rounded border border-slate-300 bg-white">
+    <TableScroll className="hidden rounded border border-slate-300 bg-white md:block">
       <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-slate-300 bg-slate-100 text-xs text-slate-600">
@@ -59,7 +86,7 @@ function CowTable({ rows, categoryId }: { rows: CowRecord[]; categoryId: string 
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   )
 }
 
@@ -122,6 +149,7 @@ export function CowListPage() {
         </span>
       </div>
 
+      <CowMobileList rows={slice} categoryId={categoryId!} />
       <CowTable rows={slice} categoryId={categoryId!} />
 
       {totalPages > 1 ? (
@@ -129,7 +157,7 @@ export function CowListPage() {
           <button
             type="button"
             disabled={safePage === 0}
-            className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium disabled:opacity-40"
+            className="matrix-touch-btn rounded-lg border border-slate-300 bg-white font-medium disabled:opacity-40"
             onClick={() => setPage((p) => Math.max(0, p - 1))}
           >
             Назад
@@ -140,7 +168,7 @@ export function CowListPage() {
           <button
             type="button"
             disabled={safePage >= totalPages - 1}
-            className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium disabled:opacity-40"
+            className="matrix-touch-btn rounded-lg border border-slate-300 bg-white font-medium disabled:opacity-40"
             onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
           >
             Вперёд

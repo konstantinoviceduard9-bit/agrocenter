@@ -140,7 +140,7 @@ export function FeedingIntakePanel({ mode, onModeChange, onApplyLab, onApplyAmts
           type="button"
           onClick={() => onModeChange('digital')}
           className={[
-            'rounded-lg px-4 py-2 text-sm font-semibold',
+              'matrix-touch-btn rounded-lg font-semibold',
             mode === 'digital' ? 'bg-blue-700 text-white' : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50',
           ].join(' ')}
         >
@@ -150,7 +150,7 @@ export function FeedingIntakePanel({ mode, onModeChange, onApplyLab, onApplyAmts
           type="button"
           onClick={() => onModeChange('photo')}
           className={[
-            'rounded-lg px-4 py-2 text-sm font-semibold',
+              'matrix-touch-btn rounded-lg font-semibold',
             mode === 'photo' ? 'bg-blue-700 text-white' : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50',
           ].join(' ')}
         >
@@ -244,7 +244,7 @@ export function FeedingIntakePanel({ mode, onModeChange, onApplyLab, onApplyAmts
             <button
               type="button"
               onClick={() => cameraRef.current?.click()}
-              className="rounded-lg bg-blue-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-800"
+              className="matrix-touch-btn w-full rounded-lg bg-blue-700 font-semibold text-white hover:bg-blue-800 sm:w-auto"
             >
               Сделать фото
             </button>
@@ -285,7 +285,7 @@ export function FeedingIntakePanel({ mode, onModeChange, onApplyLab, onApplyAmts
                   type="button"
                   onClick={runOcr}
                   disabled={ocrStatus === 'scanning'}
-                  className="mt-3 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:opacity-50"
+                  className="matrix-touch-btn mt-3 w-full rounded-lg bg-emerald-700 font-semibold text-white hover:bg-emerald-800 disabled:opacity-50 sm:w-auto"
                 >
                   {ocrStatus === 'scanning' ? 'Распознаём…' : 'Распознать автоматически'}
                 </button>
@@ -328,7 +328,7 @@ export function FeedingIntakePanel({ mode, onModeChange, onApplyLab, onApplyAmts
                   <button
                     type="button"
                     onClick={applyPhoto}
-                    className="mt-3 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
+                    className="matrix-touch-btn mt-3 w-full rounded-lg bg-blue-700 font-semibold text-white hover:bg-blue-800 sm:w-auto"
                   >
                     Применить к черновику
                   </button>
@@ -372,7 +372,7 @@ export function FeedingIntakePanel({ mode, onModeChange, onApplyLab, onApplyAmts
                   <button
                     type="button"
                     onClick={applyPhoto}
-                    className="mt-3 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
+                    className="matrix-touch-btn mt-3 w-full rounded-lg bg-blue-700 font-semibold text-white hover:bg-blue-800 sm:w-auto"
                   >
                     Применить к черновику
                   </button>

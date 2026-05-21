@@ -30,6 +30,88 @@ body,
   margin: 0;
 }
 
+@layer components {
+  /* Отступ под нижнюю панель на телефоне */
+  .matrix-safe-bottom {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (min-width: 1024px) {
+    .matrix-safe-bottom {
+      padding-bottom: 0;
+    }
+  }
+
+  .matrix-safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Таблицы: горизонтальный скролл без обрезания карточки */
+  .matrix-table-scroll {
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    scroll-padding-inline: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .matrix-table-scroll {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  .matrix-table-scroll-hint {
+    padding-left: 0.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .matrix-table-scroll-hint {
+      display: none;
+    }
+  }
+
+  /* Кнопки и поля — удобный размер пальца (≈44px) */
+  .matrix-touch-btn {
+    min-height: 2.75rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.25;
+  }
+
+  @media (min-width: 640px) {
+    .matrix-touch-btn {
+      min-height: 0;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  .matrix-touch-input,
+  .matrix-touch-input select {
+    min-height: 2.75rem;
+    font-size: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .matrix-touch-input {
+      min-height: 0;
+      font-size: 0.875rem;
+    }
+  }
+
+  .matrix-nav-touch {
+    min-height: 3rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

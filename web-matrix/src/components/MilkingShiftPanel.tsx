@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { TableScroll } from './TableScroll'
 import { WidgetCard } from './WidgetCard'
 import {
   MILKING_SHIFT_COWS_CATEGORY,
@@ -62,7 +63,7 @@ function DrillButton({
       type="button"
       onClick={onClick}
       className={[
-        'grid w-full grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 border-b border-slate-100 py-2.5 text-left text-sm transition-colors last:border-0',
+        'grid w-full grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 border-b border-slate-100 py-3.5 text-left text-sm transition-colors last:border-0 sm:py-2.5',
         open ? 'bg-blue-50/60' : 'hover:bg-slate-50',
       ].join(' ')}
     >
@@ -123,7 +124,8 @@ export function MilkingShiftPanel() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <table className="w-full text-xs">
+          <TableScroll>
+            <table className="w-full min-w-[20rem] text-xs">
             <thead>
               <tr className="border-b text-slate-500">
                 <th className="py-1 text-left font-semibold">Дойка</th>
@@ -148,6 +150,7 @@ export function MilkingShiftPanel() {
               ))}
             </tbody>
           </table>
+          </TableScroll>
         </div>
       ) : null}
 

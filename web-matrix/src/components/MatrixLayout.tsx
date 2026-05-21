@@ -7,10 +7,11 @@ import { matrixNavSections, navLabelForPath } from '../lib/matrixNav'
 import { ActiveVetSelect } from './ActiveVetSelect'
 import { DataStrip } from './DataStrip'
 import { FarmHeaderBrand } from './FarmHeaderBrand'
+import { MobileBottomNav } from './MobileBottomNav'
 
 const navItem = ({ isActive }: { isActive: boolean }) =>
   [
-    'group flex flex-col gap-0.5 rounded-lg px-2.5 py-2 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-blue-400',
+    'matrix-nav-touch group flex flex-col gap-0.5 rounded-lg px-2.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-blue-400',
     isActive
       ? 'border-l-[3px] border-blue-700 bg-blue-50 pl-[calc(0.625rem-3px)] font-semibold text-blue-900 shadow-sm'
       : 'border-l-[3px] border-transparent text-slate-700 hover:bg-slate-100',
@@ -39,12 +40,12 @@ export function MatrixLayout() {
 
   return (
     <div className="flex min-h-dvh flex-col bg-[#e8eaed] text-slate-900">
-      <header className="shrink-0 border-b border-slate-200 bg-white shadow-sm">
-        <div className="flex items-center justify-between gap-3 px-3 py-2.5 lg:px-4">
+      <header className="matrix-safe-top shrink-0 border-b border-slate-200 bg-white shadow-sm">
+        <div className="flex items-start justify-between gap-2 px-3 py-2 sm:items-center sm:gap-3 sm:py-2.5 lg:px-4">
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
             <button
               type="button"
-              className="shrink-0 rounded-lg border border-slate-200 p-1.5 text-slate-700 hover:bg-slate-50 lg:hidden"
+              className="matrix-touch-btn shrink-0 rounded-lg border border-slate-200 !min-h-10 !min-w-10 !p-2 text-slate-700 hover:bg-slate-50 lg:hidden"
               aria-expanded={navOpen}
               aria-controls="matrix-sidebar"
               onClick={() => setNavOpen((o) => !o)}
@@ -54,21 +55,24 @@ export function MatrixLayout() {
             </button>
             <FarmHeaderBrand sectionLabel={currentLabel} />
           </div>
-          <div className="flex shrink-0 items-end gap-2 text-xs sm:text-sm">
+          <div className="hidden shrink-0 items-end gap-2 sm:flex">
             <button
               type="button"
-              className="hidden rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium text-slate-700 hover:bg-slate-100 sm:inline"
+              className="matrix-touch-btn rounded-lg border border-slate-200 bg-slate-50 font-medium text-slate-700 hover:bg-slate-100"
             >
               {MATRIX_COPY.syncLabel}
             </button>
             <ActiveVetSelect />
           </div>
         </div>
+        <div className="border-t border-slate-100 px-3 py-2 sm:hidden">
+          <ActiveVetSelect fullWidth />
+        </div>
       </header>
 
       <DataStrip />
 
-      <div className="border-b border-emerald-200/90 bg-gradient-to-r from-emerald-50 to-slate-50 px-4 py-2 text-sm text-slate-800">
+      <div className="hidden border-b border-emerald-200/90 bg-gradient-to-r from-emerald-50 to-slate-50 px-4 py-2 text-sm text-slate-800 md:block">
         Финансы группы (выручка, касса, юрлица) — в{' '}
         <a
           href={groupDashboardHref()}
@@ -92,10 +96,10 @@ export function MatrixLayout() {
         <aside
           id="matrix-sidebar"
           className={[
-            'fixed inset-y-0 left-0 z-50 flex w-[min(18rem,88vw)] flex-col border-r border-slate-300 bg-[#f4f5f7] shadow-xl transition-transform lg:static lg:z-0 lg:w-60 lg:shrink-0 lg:translate-x-0 lg:shadow-none',
+            'matrix-safe-top fixed inset-y-0 left-0 z-50 flex w-[min(20rem,92vw)] flex-col border-r border-slate-300 bg-[#f4f5f7] shadow-xl transition-transform lg:static lg:z-0 lg:w-60 lg:shrink-0 lg:translate-x-0 lg:shadow-none',
             navOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           ].join(' ')}
-          style={{ top: navOpen ? 0 : undefined }}
+          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
         >
           <div className="border-b border-slate-200 bg-white/80 px-3 py-3 lg:py-4">
             <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Раздел</p>
@@ -132,10 +136,12 @@ export function MatrixLayout() {
           <p className="border-t border-slate-300 px-3 py-2 text-[10px] leading-snug text-slate-500">{MATRIX_COPY.lastSync}</p>
         </aside>
 
-        <main id="matrix-main" className="min-h-0 min-w-0 flex-1 overflow-auto p-3 sm:p-4">
+        <main id="matrix-main" className="matrix-safe-bottom min-h-0 min-w-0 flex-1 overflow-auto p-3 sm:p-4">
           <Outlet />
         </main>
       </div>
+
+      <MobileBottomNav onOpenMenu={() => setNavOpen(true)} />
     </div>
   )
 }
@@ -143,8 +149,8 @@ export function MatrixLayout() {
 export function PageTitle({ title, subtitle }: { title: string; subtitle?: ReactNode }) {
   return (
     <div className="mb-4">
-      <h2 className="text-lg font-bold text-slate-800">{title}</h2>
-      {subtitle ? <p className="mt-1 text-sm text-slate-600">{subtitle}</p> : null}
+      <h2 className="text-base font-bold text-slate-800 sm:text-lg">{title}</h2>
+      {subtitle ? <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">{subtitle}</p> : null}
     </div>
   )
 }

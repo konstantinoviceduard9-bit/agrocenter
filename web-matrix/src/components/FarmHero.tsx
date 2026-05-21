@@ -16,7 +16,7 @@ export function FarmHero() {
 
   return (
     <section
-      className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white via-slate-50 to-blue-50/90 px-4 py-8 text-center shadow-md sm:px-8 sm:py-10"
+      className="relative overflow-hidden rounded-2xl border border-slate-200/80 bg-gradient-to-br from-white via-slate-50 to-blue-50/90 px-3 py-6 text-center shadow-md sm:px-8 sm:py-10"
       aria-label="Ферма"
     >
       <div

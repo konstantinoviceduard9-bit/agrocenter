@@ -1,0 +1,101 @@
+import { NavLink, useLocation } from 'react-router-dom'
+
+type Props = {
+  onOpenMenu: () => void
+}
+
+const items = [
+  { to: '/', end: true, label: 'Сегодня', icon: 'today' },
+  { to: '/tasks', label: 'Задачи', icon: 'tasks' },
+  { to: '/barn-assignment', label: 'Коровники', icon: 'barn' },
+  { to: '/feeding', label: 'Корм', icon: 'feed' },
+] as const
+
+function NavIcon({ name }: { name: (typeof items)[number]['icon'] | 'menu' }) {
+  const cls = 'h-6 w-6'
+  switch (name) {
+    case 'today':
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h10M4 18h6" />
+        </svg>
+      )
+    case 'tasks':
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      )
+    case 'barn':
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8M8 11h8m-6 4h4M5 3h14a2 2 0 012 2v14l-4-2-4 2-4-2-4 2V5a2 2 0 012-2z" />
+        </svg>
+      )
+    case 'feed':
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-9H19M5 12H3.34M18.36 6.64l-.7.7M6.34 17.66l-.7.7m12.02-.7l.7.7M6.34 6.34l-.7.7" />
+        </svg>
+      )
+    case 'menu':
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      )
+    default:
+      return null
+  }
+}
+
+export function MobileBottomNav({ onOpenMenu }: Props) {
+  const location = useLocation()
+  const isItemActive = (to: string, end?: boolean) =>
+    end ? location.pathname === to || location.pathname === `${to}/` : location.pathname.startsWith(to)
+
+  const menuActive =
+    !items.some((i) => isItemActive(i.to, 'end' in i ? i.end : undefined)) &&
+    !location.pathname.startsWith('/animals')
+
+  return (
+    <nav
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-300 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md lg:hidden"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      aria-label="Быстрая навигация"
+    >
+      <ul className="grid grid-cols-5">
+        {items.map((item) => (
+          <li key={item.to}>
+            <NavLink
+              to={item.to}
+              end={'end' in item ? item.end : undefined}
+              className={({ isActive }) =>
+                [
+                  'flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-semibold outline-none',
+                  isActive ? 'text-blue-700' : 'text-slate-600',
+                ].join(' ')
+              }
+            >
+              <NavIcon name={item.icon} />
+              <span className="max-w-full truncate">{item.label}</span>
+            </NavLink>
+          </li>
+        ))}
+        <li>
+          <button
+            type="button"
+            onClick={onOpenMenu}
+            className={[
+              'flex min-h-[3.25rem] w-full flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-semibold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500',
+              menuActive ? 'text-blue-700' : 'text-slate-600',
+            ].join(' ')}
+          >
+            <NavIcon name="menu" />
+            <span>Ещё</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  )
+}

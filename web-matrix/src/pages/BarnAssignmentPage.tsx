@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { TableScroll } from '../components/TableScroll'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
 import {
@@ -21,6 +22,81 @@ import { fmtDec, fmtInt } from '../lib/format'
 
 type Filter = 'all' | 'pending' | 'done'
 
+function AssignmentMobileCards({
+  rows,
+  assignments,
+  onAssign,
+}: {
+  rows: TransferAnimal[]
+  assignments: Record<string, string>
+  onAssign: (cowNumber: string, barnId: string) => void
+}) {
+  return (
+    <ul className="space-y-3 md:hidden">
+      {rows.map((a, i) => {
+        const assigned = assignments[a.cowNumber]
+        const pending = !assigned
+        return (
+          <li
+            key={a.id}
+            className={[
+              'rounded-xl border p-3 shadow-sm',
+              pending ? 'border-amber-300 bg-amber-50/90' : 'border-slate-200 bg-white',
+            ].join(' ')}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <p className="text-[10px] font-semibold uppercase text-slate-500">#{i + 1}</p>
+                <Link
+                  to={cowDetailPath(BARN_TRANSFER_CATEGORY, a.cowNumber)}
+                  className="text-lg font-bold tabular-nums text-blue-800 hover:underline"
+                >
+                  {a.cowNumber}
+                </Link>
+              </div>
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium">{a.gender}</span>
+            </div>
+            <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-slate-600">
+              <div>
+                <dt className="text-slate-500">Рождение</dt>
+                <dd className="font-medium text-slate-800">{a.birthDate}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Возраст</dt>
+                <dd className="font-medium text-slate-800">{a.ageDays} дн.</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Вес</dt>
+                <dd className="font-medium text-slate-800">{fmtDec(a.weightKg, 0)} кг</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500">Мать</dt>
+                <dd className="font-medium tabular-nums text-slate-800">{a.damId}</dd>
+              </div>
+            </dl>
+            <label className="mt-3 block text-xs font-semibold text-slate-700">Коровник →</label>
+            <select
+              value={assigned ?? ''}
+              onChange={(e) => onAssign(a.cowNumber, e.target.value)}
+              className={[
+                'matrix-touch-input mt-1 w-full rounded-lg border px-3 font-semibold',
+                pending ? 'border-amber-400 bg-white' : 'border-emerald-400 bg-emerald-50 text-emerald-900',
+              ].join(' ')}
+            >
+              <option value="">Выберите коровник…</option>
+              {barnDestinations.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.label} — {b.hint}
+                </option>
+              ))}
+            </select>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
 function AssignmentTable({
   rows,
   assignments,
@@ -31,7 +107,7 @@ function AssignmentTable({
   onAssign: (cowNumber: string, barnId: string) => void
 }) {
   return (
-    <div className="overflow-x-auto">
+    <TableScroll className="hidden md:block">
       <table className="w-full min-w-[44rem] border-collapse text-left text-xs">
         <thead>
           <tr className="border-b border-slate-300 bg-slate-100 text-slate-600">
@@ -96,7 +172,7 @@ function AssignmentTable({
           })}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   )
 }
 
@@ -174,7 +250,7 @@ export function BarnAssignmentPage() {
             type="button"
             onClick={() => setGroupId(g.id)}
             className={[
-              'rounded-lg px-4 py-2 text-sm font-semibold',
+              'matrix-touch-btn rounded-lg font-semibold',
               g.id === groupId ? 'bg-blue-700 text-white' : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-50',
             ].join(' ')}
           >
@@ -245,6 +321,7 @@ export function BarnAssignmentPage() {
           </div>
         ) : null}
 
+        <AssignmentMobileCards rows={filtered} assignments={assignments} onAssign={assign} />
         <AssignmentTable rows={filtered} assignments={assignments} onAssign={assign} />
       </WidgetCard>
 
@@ -262,7 +339,7 @@ export function BarnAssignmentPage() {
                 saveHandover(next)
                 setState((s) => ({ ...s, handover: next }))
               }}
-              className={selectClass}
+              className={`matrix-touch-input ${selectClass}`}
             >
               <option value="">Выберите ветеринара…</option>
               {veterinarians.map((name) => (
@@ -284,7 +361,7 @@ export function BarnAssignmentPage() {
                 saveHandover(next)
                 setState((s) => ({ ...s, handover: next }))
               }}
-              className={selectClass}
+              className={`matrix-touch-input ${selectClass}`}
             >
               <option value="">Выберите ветеринара…</option>
               {veterinarians.map((name) => (
@@ -299,7 +376,7 @@ export function BarnAssignmentPage() {
           type="button"
           onClick={confirmHandover}
           disabled={pendingCount > 0 || !handover.handedBy.trim() || !handover.receivedBy.trim()}
-          className="mt-4 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-40"
+          className="matrix-touch-btn mt-4 w-full rounded-lg bg-blue-700 font-semibold text-white hover:bg-blue-800 disabled:opacity-40 sm:w-auto"
         >
           Подтвердить передачу
         </button>

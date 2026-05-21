@@ -276,19 +276,19 @@ export function FeedingPipelinePanel({ labRows, amtsRows, dtmRows }: Props) {
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <button
             type="button"
             onClick={confirm}
             disabled={state.status !== 'pending_review' && state.status !== 'rejected'}
-            className="rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 disabled:opacity-40"
+            className="matrix-touch-btn w-full rounded-lg bg-blue-700 font-semibold text-white hover:bg-blue-800 disabled:opacity-40 sm:w-auto"
           >
             Подтвердить данные
           </button>
           <button
             type="button"
             onClick={reject}
-            className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-800 hover:bg-red-50"
+            className="matrix-touch-btn w-full rounded-lg border border-red-300 bg-white font-semibold text-red-800 hover:bg-red-50 sm:w-auto"
           >
             Отклонить
           </button>
@@ -296,7 +296,7 @@ export function FeedingPipelinePanel({ labRows, amtsRows, dtmRows }: Props) {
             type="button"
             onClick={syncDtm}
             disabled={state.status !== 'confirmed'}
-            className="rounded-lg border border-blue-400 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-900 hover:bg-blue-100 disabled:opacity-40"
+            className="matrix-touch-btn w-full rounded-lg border border-blue-400 bg-blue-50 font-semibold text-blue-900 hover:bg-blue-100 disabled:opacity-40 sm:w-auto"
           >
             Отправить в DTM (демо)
           </button>
@@ -304,7 +304,7 @@ export function FeedingPipelinePanel({ labRows, amtsRows, dtmRows }: Props) {
             type="button"
             onClick={syncAfimilk}
             disabled={state.status !== 'synced_dtm'}
-            className="rounded-lg border border-emerald-500 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-900 hover:bg-emerald-100 disabled:opacity-40"
+            className="matrix-touch-btn w-full rounded-lg border border-emerald-500 bg-emerald-50 font-semibold text-emerald-900 hover:bg-emerald-100 disabled:opacity-40 sm:w-auto"
           >
             Обновить кормогруппу Afimilk (демо)
           </button>
