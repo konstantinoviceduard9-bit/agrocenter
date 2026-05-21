@@ -33,7 +33,7 @@ jobs:
           cache: npm
           cache-dependency-path: web/package-lock.json
 
-      - name: Install and build
+      - name: Install and build (group dashboard)
         working-directory: web
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
@@ -41,10 +41,26 @@ jobs:
           npm ci
           npm run build
 
+      - name: Install and build (Matrix farm console)
+        working-directory: web-matrix
+        env:
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/matrix/
+        run: |
+          npm ci
+          npm run build
+
+      - name: Merge Matrix app into Pages artifact
+        run: |
+          mkdir -p web/dist/matrix
+          cp -r web-matrix/dist/. web/dist/matrix/
+          cp web-matrix/dist/index.html web/dist/matrix/404.html
+
       - name: Verify index.html uses repository base for assets
         run: |
           test -f web/dist/index.html
           grep -qF "/${{ github.event.repository.name }}/assets/" web/dist/index.html
+          test -f web/dist/matrix/index.html
+          grep -qF "/${{ github.event.repository.name }}/matrix/assets/" web/dist/matrix/index.html
 
       - name: SPA fallback (GitHub Pages 404)
         run: cp web/dist/index.html web/dist/404.html

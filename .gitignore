@@ -1,6 +1,8 @@
-# Vite / Node (дашборд)
+# Vite / Node (дашборды)
 web/node_modules/
 web/dist/
+web-matrix/node_modules/
+web-matrix/dist/
 
 # Локальные секреты и среда
 .env

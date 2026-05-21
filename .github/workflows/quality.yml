@@ -8,14 +8,16 @@ on:
     branches: [main]
     paths:
       - 'web/**'
+      - 'web-matrix/**'
       - '.github/workflows/quality.yml'
   pull_request:
     paths:
       - 'web/**'
+      - 'web-matrix/**'
       - '.github/workflows/quality.yml'
 
 jobs:
-  check:
+  check-web:
     runs-on: ubuntu-latest
     env:
       VITE_BASE_PATH: /${{ github.event.repository.name }}/
@@ -30,6 +32,27 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: web/package-lock.json
+
+      - name: Install and check
+        run: |
+          npm ci
+          npm run check
+
+  check-matrix:
+    runs-on: ubuntu-latest
+    env:
+      VITE_BASE_PATH: /${{ github.event.repository.name }}/matrix/
+    defaults:
+      run:
+        working-directory: web-matrix
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web-matrix/package-lock.json
 
       - name: Install and check
         run: |

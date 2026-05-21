@@ -1,0 +1,27 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { MatrixLayout } from './components/MatrixLayout'
+import { TodayPage } from './pages/TodayPage'
+import { MilkingPage } from './pages/MilkingPage'
+import { FeedingPage } from './pages/FeedingPage'
+import { TasksPage } from './pages/TasksPage'
+import { MachinesPage } from './pages/MachinesPage'
+
+const routerBasename =
+  import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '')
+
+export default function App() {
+  return (
+    <BrowserRouter basename={routerBasename}>
+      <Routes>
+        <Route element={<MatrixLayout />}>
+          <Route index element={<TodayPage />} />
+          <Route path="milking" element={<MilkingPage />} />
+          <Route path="feeding" element={<FeedingPage />} />
+          <Route path="tasks" element={<TasksPage />} />
+          <Route path="machines" element={<MachinesPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  )
+}
