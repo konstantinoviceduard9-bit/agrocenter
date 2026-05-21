@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { WidgetCard } from '../components/WidgetCard'
 import { VetComments } from '../components/VetComments'
+import { VetTreatments } from '../components/VetTreatments'
 import { PageTitle } from '../components/MatrixLayout'
 import { buildCowDetail } from '../data/cowDetail'
 import { animalListPath, getCategoryById } from '../data/cowLists'
@@ -166,34 +167,11 @@ export function CowDetailPage() {
           <VetComments cowNumber={cowNumber} />
         </div>
 
-        <WidgetCard title="Лечение — препараты и инъекции" className="lg:col-span-8">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[36rem] border-collapse text-left text-sm">
-              <thead>
-                <tr className="border-b border-slate-300 bg-slate-100 text-xs text-slate-600">
-                  <th className="px-2 py-2 font-semibold">Дата</th>
-                  <th className="px-2 py-2 font-semibold">Препарат</th>
-                  <th className="px-2 py-2 font-semibold">Доза</th>
-                  <th className="px-2 py-2 font-semibold">Путь</th>
-                  <th className="px-2 py-2 font-semibold">Ветеринар</th>
-                  <th className="px-2 py-2 font-semibold">Причина</th>
-                </tr>
-              </thead>
-              <tbody>
-                {detail.treatments.map((t, i) => (
-                  <tr key={`${t.date}-${i}`} className="border-b border-slate-100">
-                    <td className="px-2 py-1.5 tabular-nums">{t.date}</td>
-                    <td className="px-2 py-1.5 font-medium">{t.drug}</td>
-                    <td className="px-2 py-1.5">{t.dose}</td>
-                    <td className="px-2 py-1.5">{t.route}</td>
-                    <td className="px-2 py-1.5 text-slate-700">{t.vet}</td>
-                    <td className="px-2 py-1.5 text-slate-600">{t.reason}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </WidgetCard>
+        <VetTreatments
+          cowNumber={cowNumber}
+          defaultReason={detail.categoryLabel}
+          demoTreatments={detail.treatments}
+        />
 
         <WidgetCard title="Надой по дням (14 дней)" className="lg:col-span-12">
           <div className="overflow-x-auto">
