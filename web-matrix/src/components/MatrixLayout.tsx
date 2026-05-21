@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useStaffAuth } from '../context/StaffAuthContext'
 import { MATRIX_COPY } from '../lib/appCopy'
 import { groupDashboardHref } from '../lib/dashboardLinks'
-import { matrixNavSections, navLabelForPath } from '../lib/matrixNav'
+import { matrixNavSections, navLabelForPath, navSectionsForRole } from '../lib/matrixNav'
+import { canRoleAccessPath } from '../lib/staffRoleAccess'
 import { ActiveVetSelect } from './ActiveVetSelect'
 import { DataStrip } from './DataStrip'
 import { FarmHeaderBrand } from './FarmHeaderBrand'
 import { MobileBottomNav } from './MobileBottomNav'
+import { StaffSessionBar } from './StaffSessionBar'
 
 const navItem = ({ isActive }: { isActive: boolean }) =>
   [
@@ -31,12 +34,21 @@ function MenuIcon({ open }: { open: boolean }) {
 
 export function MatrixLayout() {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { employee, isRestricted } = useStaffAuth()
   const [navOpen, setNavOpen] = useState(false)
   const currentLabel = navLabelForPath(location.pathname)
+  const navSections = isRestricted && employee ? navSectionsForRole(employee.roleId) : matrixNavSections
 
   useEffect(() => {
     setNavOpen(false)
   }, [location.pathname])
+
+  useEffect(() => {
+    if (!isRestricted || !employee) return
+    if (canRoleAccessPath(employee.roleId, location.pathname)) return
+    navigate('/my-tasks', { replace: true })
+  }, [isRestricted, employee, location.pathname, navigate])
 
   return (
     <div className="flex min-h-dvh flex-col bg-[#e8eaed] text-slate-900">
@@ -62,11 +74,13 @@ export function MatrixLayout() {
             >
               {MATRIX_COPY.syncLabel}
             </button>
-            <ActiveVetSelect />
+            {employee?.roleId === 'vet' || !isRestricted ? <ActiveVetSelect /> : null}
+            <StaffSessionBar />
           </div>
         </div>
-        <div className="border-t border-slate-100 px-3 py-2 sm:hidden">
-          <ActiveVetSelect fullWidth />
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 px-3 py-2 sm:hidden">
+          {employee?.roleId === 'vet' || !isRestricted ? <ActiveVetSelect fullWidth /> : null}
+          <StaffSessionBar />
         </div>
       </header>
 
@@ -107,7 +121,7 @@ export function MatrixLayout() {
           </div>
 
           <nav className="flex-1 overflow-y-auto p-2 text-sm" aria-label="Навигация по пульту">
-            {matrixNavSections.map((sec) => (
+            {navSections.map((sec) => (
               <div key={sec.heading} className="mb-4">
                 <p className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">{sec.heading}</p>
                 <ul className="space-y-0.5">

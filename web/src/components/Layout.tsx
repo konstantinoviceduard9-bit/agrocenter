@@ -223,6 +223,16 @@ export function Layout() {
             </NavLink>
           ))}
 
+          <NavHeading>Персонал</NavHeading>
+          <a
+            href={matrixFarmHref('staff')}
+            className={item({ isActive: false })}
+            onClick={closeNav}
+          >
+            Сотрудники и роли →
+            <span className="mt-0.5 block text-[10px] font-normal opacity-80">доярки, ветеринары, задачи</span>
+          </a>
+
           <NavHeading>Другой продукт</NavHeading>
           <a
             href={matrixFarmHref()}

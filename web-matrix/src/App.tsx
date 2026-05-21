@@ -2,6 +2,7 @@ import { lazy, Suspense, type ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { MatrixLayout } from './components/MatrixLayout'
 import { PageFallback } from './components/PageFallback'
+import { StaffAuthProvider } from './context/StaffAuthContext'
 
 const TodayPage = lazy(() => import('./pages/TodayPage').then((m) => ({ default: m.TodayPage })))
 const MilkingPage = lazy(() => import('./pages/MilkingPage').then((m) => ({ default: m.MilkingPage })))
@@ -11,6 +12,9 @@ const MachinesPage = lazy(() => import('./pages/MachinesPage').then((m) => ({ de
 const BarnAssignmentPage = lazy(() =>
   import('./pages/BarnAssignmentPage').then((m) => ({ default: m.BarnAssignmentPage })),
 )
+const StaffPage = lazy(() => import('./pages/StaffPage').then((m) => ({ default: m.StaffPage })))
+const StaffLoginPage = lazy(() => import('./pages/StaffLoginPage').then((m) => ({ default: m.StaffLoginPage })))
+const MyTasksPage = lazy(() => import('./pages/MyTasksPage').then((m) => ({ default: m.MyTasksPage })))
 const CowListPage = lazy(() => import('./pages/CowListPage').then((m) => ({ default: m.CowListPage })))
 const CowDetailPage = lazy(() => import('./pages/CowDetailPage').then((m) => ({ default: m.CowDetailPage })))
 
@@ -23,9 +27,10 @@ function Lazy({ children }: { children: ReactNode }) {
 
 export default function App() {
   return (
-    <BrowserRouter basename={routerBasename}>
-      <Routes>
-        <Route element={<MatrixLayout />}>
+    <StaffAuthProvider>
+      <BrowserRouter basename={routerBasename}>
+        <Routes>
+          <Route element={<MatrixLayout />}>
           <Route
             index
             element={
@@ -75,6 +80,30 @@ export default function App() {
             }
           />
           <Route
+            path="staff"
+            element={
+              <Lazy>
+                <StaffPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="login"
+            element={
+              <Lazy>
+                <StaffLoginPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="my-tasks"
+            element={
+              <Lazy>
+                <MyTasksPage />
+              </Lazy>
+            }
+          />
+          <Route
             path="animals/:categoryId/cow/:cowNumber"
             element={
               <Lazy>
@@ -91,8 +120,9 @@ export default function App() {
             }
           />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </StaffAuthProvider>
   )
 }

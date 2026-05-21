@@ -1,23 +1,24 @@
 import { NavLink, useLocation } from 'react-router-dom'
+import { useStaffAuth } from '../context/StaffAuthContext'
+import { mobileNavForRole, type MobileNavItem } from '../lib/staffRoleAccess'
 
 type Props = {
   onOpenMenu: () => void
 }
 
-const items = [
-  { to: '/', end: true, label: 'Сегодня', icon: 'today' },
-  { to: '/tasks', label: 'Задачи', icon: 'tasks' },
-  { to: '/barn-assignment', label: 'Коровники', icon: 'barn' },
-  { to: '/feeding', label: 'Корм', icon: 'feed' },
-] as const
-
-function NavIcon({ name }: { name: (typeof items)[number]['icon'] | 'menu' }) {
+function NavIcon({ name }: { name: MobileNavItem['icon'] | 'menu' }) {
   const cls = 'h-6 w-6'
   switch (name) {
     case 'today':
       return (
         <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h10M4 18h6" />
+        </svg>
+      )
+    case 'my':
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       )
     case 'tasks':
@@ -38,6 +39,18 @@ function NavIcon({ name }: { name: (typeof items)[number]['icon'] | 'menu' }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-9H19M5 12H3.34M18.36 6.64l-.7.7M6.34 17.66l-.7.7m12.02-.7l.7.7M6.34 6.34l-.7.7" />
         </svg>
       )
+    case 'milk':
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-6v6m4-9v9M6 4h12v16H6z" />
+        </svg>
+      )
+    case 'machines':
+      return (
+        <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0zM5 11h14l-1-4H6l-1 4z" />
+        </svg>
+      )
     case 'menu':
       return (
         <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
@@ -51,12 +64,19 @@ function NavIcon({ name }: { name: (typeof items)[number]['icon'] | 'menu' }) {
 
 export function MobileBottomNav({ onOpenMenu }: Props) {
   const location = useLocation()
+  const { employee, isLoggedIn } = useStaffAuth()
+  const items = mobileNavForRole(employee?.roleId ?? null, isLoggedIn)
+
   const isItemActive = (to: string, end?: boolean) =>
     end ? location.pathname === to || location.pathname === `${to}/` : location.pathname.startsWith(to)
 
   const menuActive =
-    !items.some((i) => isItemActive(i.to, 'end' in i ? i.end : undefined)) &&
-    !location.pathname.startsWith('/animals')
+    !items.some((i) => isItemActive(i.to, i.end)) &&
+    !location.pathname.startsWith('/animals') &&
+    !location.pathname.startsWith('/staff') &&
+    !location.pathname.startsWith('/login')
+
+  const colCount = items.length + 1
 
   return (
     <nav
@@ -64,12 +84,12 @@ export function MobileBottomNav({ onOpenMenu }: Props) {
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       aria-label="Быстрая навигация"
     >
-      <ul className="grid grid-cols-5">
+      <ul className="grid" style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
         {items.map((item) => (
           <li key={item.to}>
             <NavLink
               to={item.to}
-              end={'end' in item ? item.end : undefined}
+              end={item.end}
               className={({ isActive }) =>
                 [
                   'flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-semibold outline-none',

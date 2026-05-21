@@ -1,5 +1,7 @@
 import { countAllUnassigned } from '../data/barnAssignment'
+import type { StaffRoleId } from '../data/staff'
 import { vetTasks } from '../data/vetTasks'
+import { canRoleAccessPath, hasFullFarmAccess } from './staffRoleAccess'
 
 export type MatrixNavLink = {
   to: string
@@ -14,12 +16,19 @@ export type MatrixNavSection = {
   links: MatrixNavLink[]
 }
 
+const myTasksLink: MatrixNavLink = {
+  to: '/my-tasks',
+  label: 'Мои задачи',
+  hint: 'От руководства и по роли',
+}
+
 export const matrixNavSections: MatrixNavSection[] = [
   {
     heading: 'Операции дня',
     links: [
       { to: '/', end: true, label: 'Пульт «Сегодня»', hint: 'Молоко, стадо, алерты' },
       { to: '/milking', label: 'Дойка', hint: 'Смена, доильный зал' },
+      myTasksLink,
     ],
   },
   {
@@ -36,6 +45,12 @@ export const matrixNavSections: MatrixNavSection[] = [
     ],
   },
   {
+    heading: 'Персонал',
+    links: [
+      { to: '/staff', label: 'Сотрудники и роли', hint: 'Доярки, ветеринары, задачи от руководства' },
+    ],
+  },
+  {
     heading: 'Техника',
     links: [
       { to: '/machines', label: 'Машины · Аксента', hint: 'Кормораздатчики, карта GPS' },
@@ -45,7 +60,19 @@ export const matrixNavSections: MatrixNavSection[] = [
 
 const flatLinks = matrixNavSections.flatMap((s) => s.links)
 
+export function navSectionsForRole(roleId: StaffRoleId | null): MatrixNavSection[] {
+  if (!roleId || hasFullFarmAccess(roleId)) return matrixNavSections
+  return matrixNavSections
+    .map((sec) => ({
+      ...sec,
+      links: sec.links.filter((link) => canRoleAccessPath(roleId, link.to)),
+    }))
+    .filter((sec) => sec.links.length > 0)
+}
+
 export function navLabelForPath(pathname: string): string {
+  if (pathname === '/login') return 'Вход'
+  if (pathname.startsWith('/my-tasks')) return 'Мои задачи'
   if (pathname.startsWith('/animals/')) return 'Карточка животного'
   const exact = flatLinks.find((l) => (l.end ? pathname === l.to || pathname === `${l.to}/` : pathname === l.to || pathname.startsWith(`${l.to}/`)))
   if (exact) return exact.label
