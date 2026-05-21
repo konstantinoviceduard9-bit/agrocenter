@@ -79,41 +79,6 @@ export const feedingKpi = {
   mixingSec: 0,
 } as const
 
-export const vetTasks = [
-  {
-    id: 't1',
-    barn: 'Коровник 5',
-    cow: '2964',
-    issue: 'Мастит (ранний сигнал 78%)',
-    priority: 'high' as const,
-    status: 'open' as const,
-  },
-  {
-    id: 't2',
-    barn: 'Коровник 5',
-    cow: '231112',
-    issue: 'Кетоз (65%)',
-    priority: 'high' as const,
-    status: 'open' as const,
-  },
-  {
-    id: 't3',
-    barn: 'Коровник 7',
-    cow: '240146',
-    issue: 'Тренд хромоты',
-    priority: 'medium' as const,
-    status: 'in_progress' as const,
-  },
-  {
-    id: 't4',
-    barn: 'Коровник 3',
-    cow: '18902',
-    issue: 'Новотельная — осмотр',
-    priority: 'medium' as const,
-    status: 'done' as const,
-  },
-]
-
 export const machines = [
   { name: 'Силокинг', status: 'На маршруте · кормление', lat: 54.12, lng: 55.98 },
   { name: 'Погрузчик FEL-2', status: 'Стоит · кормоцех', lat: 54.11, lng: 55.97 },

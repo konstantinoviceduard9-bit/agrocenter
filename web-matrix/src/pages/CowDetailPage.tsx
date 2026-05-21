@@ -6,6 +6,7 @@ import { VetTreatments } from '../components/VetTreatments'
 import { PageTitle } from '../components/MatrixLayout'
 import { buildCowDetail } from '../data/cowDetail'
 import { animalListPath, getCategoryById } from '../data/cowLists'
+import { findVetTask } from '../data/vetTasks'
 import { fmtDec, fmtInt, fmtPct } from '../lib/format'
 
 function DlGrid({ rows }: { rows: { term: string; value: string }[] }) {
@@ -37,6 +38,7 @@ export function CowDetailPage() {
     [categoryId, cowNumber],
   )
   const category = getCategoryById(categoryId)
+  const vetTask = categoryId && cowNumber ? findVetTask(categoryId, cowNumber) : undefined
 
   if (!detail || !categoryId || !cowNumber) {
     return (
@@ -58,9 +60,15 @@ export function CowDetailPage() {
           ← Сводка
         </Link>
         <span className="text-slate-400">/</span>
-        <Link to={animalListPath(categoryId)} className="text-blue-700 hover:underline">
-          {category?.label ?? 'Список'}
-        </Link>
+        {vetTask ? (
+          <Link to="/tasks" className="text-blue-700 hover:underline">
+            Задачи ветслужбы
+          </Link>
+        ) : (
+          <Link to={animalListPath(categoryId)} className="text-blue-700 hover:underline">
+            {category?.label ?? 'Список'}
+          </Link>
+        )}
         <span className="text-slate-400">/</span>
         <span className="font-semibold text-slate-800">№ {cowNumber}</span>
       </nav>
@@ -69,7 +77,7 @@ export function CowDetailPage() {
         title={`Корова № ${cowNumber}`}
         subtitle={
           <>
-            {s.barn} · {s.group} · {detail.categoryLabel}
+            {s.barn} · {s.group} · {vetTask?.issue ?? detail.categoryLabel}
             {!detail.rfidOk ? (
               <span className="ml-2 rounded bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">
                 Метка неисправна

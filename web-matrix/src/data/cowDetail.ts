@@ -1,4 +1,5 @@
 import { getCategoryById, getCowsForCategory, type CowRecord } from './cowLists'
+import { findVetTaskSummary } from './vetTasks'
 
 function hash(s: string): number {
   let h = 0
@@ -91,7 +92,7 @@ export function findCowInCategory(categoryId: string, cowNumber: string): CowRec
 
 export function buildCowDetail(categoryId: string, cowNumber: string): CowDetail | null {
   const category = getCategoryById(categoryId)
-  const summary = findCowInCategory(categoryId, cowNumber)
+  const summary = findCowInCategory(categoryId, cowNumber) ?? findVetTaskSummary(categoryId, cowNumber)
   if (!category || !summary) return null
 
   const seed = hash(`${categoryId}:${cowNumber}`)
