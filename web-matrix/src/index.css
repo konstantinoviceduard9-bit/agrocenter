@@ -32,9 +32,10 @@ body,
 }
 
 @layer components {
-  /* Отступ под нижнюю панель на телефоне */
+  /* Отступ под нижнюю панель (иконка + подпись + safe-area на iPhone) */
   .matrix-safe-bottom {
-    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+    scroll-padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
   }
 
   .matrix-dialog-safe {

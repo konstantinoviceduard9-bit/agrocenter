@@ -45,7 +45,8 @@ export function mobileNavForRole(roleId: StaffRoleId | null, isLoggedIn: boolean
   ]
 
   const picked = candidates.filter((item) => canRoleAccessPath(roleId, item.to))
-  return picked.slice(0, 4)
+  /* Не больше 3 разделов + «Ещё», иначе подписи обрезаются на узком экране */
+  return picked.slice(0, 3)
 }
 
 export function canRoleAccessPath(roleId: StaffRoleId, pathname: string): boolean {

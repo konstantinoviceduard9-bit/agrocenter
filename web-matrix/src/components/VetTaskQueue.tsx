@@ -41,46 +41,42 @@ function TaskRow({ task }: { task: VetTask }) {
   const detailTo = cowDetailPath(task.categoryId, task.cow)
 
   return (
-    <li className="border-b border-slate-200 last:border-0">
-      <div className="flex flex-wrap items-center gap-2 py-3 sm:flex-nowrap">
-        <Link
-          to={detailTo}
-          className="group min-w-0 flex-1 rounded-lg px-2 py-1 outline-none transition-colors hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500/40"
-        >
-          <p className="font-semibold text-slate-900 group-hover:text-blue-900">
-            {task.barn} · №{task.cow}
-          </p>
-          <p className="text-sm text-slate-600 group-hover:text-blue-800">{task.issue}</p>
-          <p className="mt-1 text-xs text-blue-700 opacity-0 transition-opacity group-hover:opacity-100">
-            Открыть карточку коровы →
-          </p>
-        </Link>
+    <li className="border-b border-slate-200 px-1 py-3 last:border-0 sm:px-0">
+      <Link
+        to={detailTo}
+        className="group block rounded-lg px-2 py-1 outline-none hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500/40"
+      >
+        <p className="font-semibold text-slate-900 group-hover:text-blue-900">
+          {task.barn} · №{task.cow}
+        </p>
+        <p className="text-sm text-slate-600 group-hover:text-blue-800">{task.issue}</p>
+        <p className="mt-1 hidden text-xs text-blue-700 sm:block">Открыть карточку коровы →</p>
+      </Link>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <span className={`rounded px-2 py-0.5 text-xs font-semibold ${priorityClass[task.priority]}`}>
-            {task.priority === 'high' ? 'Высокий' : 'Средний'}
-          </span>
-          <span className={`rounded px-2 py-0.5 text-xs font-medium ${statusBtnClass[status]}`}>
-            {statusLabel[status]}
-          </span>
-        </div>
+      <div className="mt-2 flex flex-wrap items-center gap-2 px-2">
+        <span className={`rounded px-2 py-0.5 text-xs font-semibold ${priorityClass[task.priority]}`}>
+          {task.priority === 'high' ? 'Высокий' : 'Средний'}
+        </span>
+        <span className={`rounded px-2 py-0.5 text-xs font-medium ${statusBtnClass[status]}`}>
+          {statusLabel[status]}
+        </span>
+      </div>
 
-        <div className="flex w-full shrink-0 flex-wrap gap-1 sm:w-auto" role="group" aria-label="Сменить статус">
-          {(['open', 'in_progress', 'done'] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              title={statusLabel[s]}
-              onClick={() => setStatusAndSave(s)}
-              className={[
-                'rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wide',
-                status === s ? 'bg-blue-700 text-white' : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50',
-              ].join(' ')}
-            >
-              {s === 'open' ? 'Откр.' : s === 'in_progress' ? 'В раб.' : 'Готово'}
-            </button>
-          ))}
-        </div>
+      <div className="mt-2 flex flex-wrap gap-2 px-2 pb-1" role="group" aria-label="Сменить статус">
+        {(['open', 'in_progress', 'done'] as const).map((s) => (
+          <button
+            key={s}
+            type="button"
+            title={statusLabel[s]}
+            onClick={() => setStatusAndSave(s)}
+            className={[
+              'matrix-touch-btn !min-h-9 flex-1 rounded-lg px-2 py-2 text-xs font-semibold sm:flex-none sm:!min-h-0 sm:py-1 sm:text-[10px]',
+              status === s ? 'bg-blue-700 text-white' : 'bg-white text-slate-700 ring-1 ring-slate-200',
+            ].join(' ')}
+          >
+            {statusLabel[s]}
+          </button>
+        ))}
       </div>
     </li>
   )
@@ -88,7 +84,7 @@ function TaskRow({ task }: { task: VetTask }) {
 
 export function VetTaskQueue() {
   return (
-    <ul className="divide-y divide-slate-200">
+    <ul className="divide-y divide-slate-200 pb-2">
       {vetTasks.map((t) => (
         <TaskRow key={t.id} task={t} />
       ))}

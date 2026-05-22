@@ -86,10 +86,13 @@ export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-300 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md lg:hidden"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      style={{ paddingBottom: 'max(0.25rem, env(safe-area-inset-bottom, 0px))' }}
       aria-label="Быстрая навигация"
     >
-      <ul className="grid" style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
+      <ul
+        className="grid min-h-[3.5rem]"
+        style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}
+      >
         {items.map((item) => (
           <li key={item.to}>
             <NavLink
@@ -103,7 +106,7 @@ export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
               }
             >
               <NavIcon name={item.icon} />
-              <span className="max-w-full truncate">{item.label}</span>
+              <span className="max-w-full truncate leading-tight">{item.label}</span>
             </NavLink>
           </li>
         ))}

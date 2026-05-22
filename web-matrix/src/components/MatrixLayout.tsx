@@ -122,7 +122,11 @@ export function MatrixLayout() {
             <p className="mt-0.5 text-sm font-bold text-slate-800">{currentLabel}</p>
           </div>
 
-          <nav className="flex-1 overflow-y-auto p-2 text-sm" aria-label="Навигация по пульту">
+          <nav
+            className="flex-1 overflow-y-auto p-2 pb-6 text-sm"
+            style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))' }}
+            aria-label="Навигация по пульту"
+          >
             {navSections.map((sec) => (
               <div key={sec.heading} className="mb-4">
                 <p className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">{sec.heading}</p>
