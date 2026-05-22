@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { ManagerNotificationsPanel } from '../components/ManagerNotificationsPanel'
+import { ExecutiveBrief } from '../components/ExecutiveBrief'
 import { WorkReportsPanel } from '../components/WorkReportsPanel'
+import { isPresentationMode } from '../lib/presentationMode'
 import { SyncStatusStrip } from '../components/SyncStatusStrip'
 import { TaskShareBanner } from '../components/TaskShareBanner'
 import { WidgetCard } from '../components/WidgetCard'
@@ -225,6 +227,8 @@ export function StaffPage() {
 
       <SyncStatusStrip />
 
+      <ExecutiveBrief />
+
       {sharePayload && syncMode() === 'local' ? (
         <TaskShareBanner payload={sharePayload} onDismiss={() => setSharePayload(null)} />
       ) : null}
@@ -239,19 +243,21 @@ export function StaffPage() {
         <ManagerNotificationsPanel />
       </WidgetCard>
 
-      <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
-        <p className="font-semibold">Как задача попадёт на телефон (демо)</p>
-        <ul className="mt-1 list-disc space-y-1 pl-5 text-xs leading-relaxed">
-          <li>
-            <strong>Один телефон:</strong> назначайте здесь же в приложении «Матрикс» — сотрудник сразу увидит в «Мои задачи».
-          </li>
-          <li>
-            <strong>Компьютер → телефон:</strong> после «Назначить» нажмите <strong>«Отправить ссылку»</strong> (WhatsApp / Telegram) —
-            сотрудник откроет её на телефоне.
-          </li>
-          <li>Сервер и push — следующий этап (задачи без ссылки).</li>
-        </ul>
-      </div>
+      {!isPresentationMode() ? (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
+          <p className="font-semibold">Как задача попадёт на телефон (демо)</p>
+          <ul className="mt-1 list-disc space-y-1 pl-5 text-xs leading-relaxed">
+            <li>
+              <strong>Один телефон:</strong> назначайте здесь же в приложении «Матрикс» — сотрудник сразу увидит в «Мои задачи».
+            </li>
+            <li>
+              <strong>Компьютер → телефон:</strong> после «Назначить» нажмите <strong>«Отправить ссылку»</strong> (WhatsApp / Telegram) —
+              сотрудник откроет её на телефоне.
+            </li>
+            <li>Сервер и push — следующий этап (задачи без ссылки).</li>
+          </ul>
+        </div>
+      ) : null}
 
       <WidgetCard title="Роли на ферме">
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">

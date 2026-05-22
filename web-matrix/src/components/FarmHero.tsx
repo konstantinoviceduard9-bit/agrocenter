@@ -1,4 +1,5 @@
 import { MATRIX_COPY } from '../lib/appCopy'
+import { isPresentationMode } from '../lib/presentationMode'
 import { farmMeta, herdInventory, milkProduction } from '../data/matrixMocks'
 import { fmtInt } from '../lib/format'
 
@@ -45,6 +46,11 @@ export function FarmHero() {
           {MATRIX_COPY.farmName}
         </h1>
         <p className="mt-2 text-pretty text-sm text-slate-600 sm:text-base">{MATRIX_COPY.farmTagline}</p>
+        {isPresentationMode() ? (
+          <p className="mt-3 inline-block rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
+            Исполнительный показ · AI и автоматизация операций
+          </p>
+        ) : null}
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           <StatChip label="Коров на ферме" value={fmtInt(totalCows)} />

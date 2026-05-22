@@ -5,7 +5,8 @@ import { useStaffAuth } from '../hooks/useStaffAuth'
 import { MATRIX_COPY } from '../lib/appCopy'
 import { groupDashboardHref } from '../lib/dashboardLinks'
 import { matrixNavSections, navLabelForPath, navSectionsForRole } from '../lib/matrixNav'
-import { canRoleAccessPath } from '../lib/staffRoleAccess'
+import { canRoleAccessPath, hasFullFarmAccess } from '../lib/staffRoleAccess'
+import { PresentationModeBar } from './PresentationModeBar'
 import { ActiveVetSelect } from './ActiveVetSelect'
 import { DataStrip } from './DataStrip'
 import { FarmHeaderBrand } from './FarmHeaderBrand'
@@ -40,6 +41,8 @@ export function MatrixLayout() {
   const isLoginPage = location.pathname.startsWith('/login')
   const currentLabel = navLabelForPath(location.pathname)
   const navSections = isRestricted && employee ? navSectionsForRole(employee.roleId) : matrixNavSections
+  const showExecutiveChrome =
+    !isLoginPage && (!employee || hasFullFarmAccess(employee.roleId))
 
   useEffect(() => {
     setNavOpen(false)
@@ -91,6 +94,7 @@ export function MatrixLayout() {
         ) : null}
       </header>
 
+      {showExecutiveChrome ? <PresentationModeBar /> : null}
       {!isLoginPage ? <DataStrip /> : null}
 
       <div className="hidden border-b border-emerald-200/90 bg-gradient-to-r from-emerald-50 to-slate-50 px-4 py-2 text-sm text-slate-800 md:block">

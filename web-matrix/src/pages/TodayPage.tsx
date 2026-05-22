@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
+import { ExecutiveBrief } from '../components/ExecutiveBrief'
 import { FarmHero } from '../components/FarmHero'
+import { DemoShowScript } from '../components/DemoShowScript'
+import { isPresentationMode } from '../lib/presentationMode'
+import { useStaffAuth } from '../hooks/useStaffAuth'
+import { hasFullFarmAccess } from '../lib/staffRoleAccess'
 import { WidgetCard } from '../components/WidgetCard'
 import { CountList } from '../components/CountList'
 import { animalListPath, categoryCountItems } from '../data/cowLists'
@@ -28,8 +33,17 @@ function KpiRow({ label, value }: { label: string; value: string }) {
 }
 
 export function TodayPage() {
+  const { employee, isRestricted } = useStaffAuth()
+  const showBrief = !isRestricted || (employee && hasFullFarmAccess(employee.roleId))
+
   return (
     <div className="grid auto-rows-min gap-3 lg:grid-cols-12 lg:gap-4">
+      {showBrief ? (
+        <div className="lg:col-span-12">
+          {isPresentationMode() ? <DemoShowScript /> : null}
+          <ExecutiveBrief />
+        </div>
+      ) : null}
       <div className="lg:col-span-12">
         <FarmHero />
       </div>

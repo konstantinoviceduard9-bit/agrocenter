@@ -1,6 +1,16 @@
 import { syncMode } from '../lib/matrixSync'
+import { isPresentationMode } from '../lib/presentationMode'
 
 export function SyncStatusStrip() {
+  if (isPresentationMode()) {
+    return (
+      <p className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50/90 px-3 py-2 text-xs text-emerald-900">
+        <strong>Показ для руководства.</strong> Цифры и задачи — демо по презентации; живые Afimilk / DTM — следующий этап
+        подключения.
+      </p>
+    )
+  }
+
   const mode = syncMode()
   if (mode === 'cloud') {
     return (

@@ -1,6 +1,9 @@
 import { MATRIX_COPY } from '../lib/appCopy'
+import { isPresentationMode } from '../lib/presentationMode'
 
 export function DataStrip() {
+  if (isPresentationMode()) return null
+
   return (
     <div
       className="border-b border-amber-200/90 bg-amber-50 px-3 py-1.5 text-[11px] leading-snug text-amber-950 sm:px-4 sm:py-2 sm:text-xs"
