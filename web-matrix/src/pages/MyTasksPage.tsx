@@ -6,7 +6,7 @@ import { SyncStatusStrip } from '../components/SyncStatusStrip'
 import { VetTaskQueue } from '../components/VetTaskQueue'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
-import { useStaffAuth } from '../context/StaffAuthContext'
+import { useStaffAuth } from '../hooks/useStaffAuth'
 import { loadLeadershipTasks, roleById, type LeadershipTask } from '../data/staff'
 import {
   decodeTaskShare,

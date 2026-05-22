@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useStaffAuth } from '../context/StaffAuthContext'
+import { useStaffAuth } from '../hooks/useStaffAuth'
 import { roleById } from '../data/staff'
 
 export function StaffSessionBar({ compact = false }: { compact?: boolean }) {

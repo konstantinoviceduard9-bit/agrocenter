@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useStaffAuth } from '../context/StaffAuthContext'
+import { useStaffAuth } from '../hooks/useStaffAuth'
 import { viewerSeesNotification } from '../lib/notificationRouting'
 import {
   loadManagerNotifications,

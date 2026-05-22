@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { PwaInstallHint } from '../components/PwaInstallHint'
-import { useStaffAuth } from '../context/StaffAuthContext'
+import { useStaffAuth } from '../hooks/useStaffAuth'
 import { roleById, staffMembers, staffRoles, type StaffRoleId } from '../data/staff'
 
 const LAST_LOGIN_KEY = 'matrix-last-login-employee'

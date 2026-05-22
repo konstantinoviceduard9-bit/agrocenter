@@ -16,6 +16,7 @@ export type WorkReport = {
 }
 
 const STORAGE_KEY = 'matrix-work-reports-v1'
+const RECONCILE_KEY = 'matrix-work-reports-reconciled-v1'
 export const WORK_REPORTS_CHANGED = 'matrix-work-reports-changed'
 
 const kindLabel: Record<WorkReportKind, string> = {
@@ -113,8 +114,13 @@ export function recordBarnHandover(
   })
 }
 
-/** Подтянуть уже сохранённые статусы (вет, руководство, передача) в журнал без дублей. */
+/** Подтянуть уже сохранённые статусы (вет, руководство, передача) в журнал без дублей (один раз). */
 export function reconcileWorkReportsFromState(activeVetName: string) {
+  try {
+    if (localStorage.getItem(RECONCILE_KEY)) return
+  } catch {
+    /* ignore */
+  }
   for (const task of loadLeadershipTasks()) {
     if (task.status !== 'done') continue
     const who = staffMemberById(task.employeeId)?.name ?? 'Сотрудник'
@@ -153,6 +159,12 @@ export function reconcileWorkReportsFromState(activeVetName: string) {
       title: `Передача списка · ${group?.label ?? 'группа'}`,
       detail: `Принял: ${handover.receivedBy} · назначено: ${count}`,
     })
+  }
+
+  try {
+    localStorage.setItem(RECONCILE_KEY, '1')
+  } catch {
+    /* ignore */
   }
 }
 

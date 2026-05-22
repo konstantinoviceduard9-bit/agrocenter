@@ -1,6 +1,7 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
-import { staffMembers, type StaffMember } from '../data/staff'
+import { useCallback, useMemo, useState, type ReactNode } from 'react'
+import { staffMembers } from '../data/staff'
 import { hasFullFarmAccess } from '../lib/staffRoleAccess'
+import { MatrixStaffAuthContext, type StaffAuthContextValue } from './matrixStaffAuth'
 
 const SESSION_KEY = 'matrix-staff-session-v1'
 
@@ -17,16 +18,6 @@ function loadSession(): Session | null {
     return null
   }
 }
-
-type StaffAuthContextValue = {
-  employee: StaffMember | null
-  isLoggedIn: boolean
-  isRestricted: boolean
-  login: (pin: string, employeeId?: string) => { ok: true } | { ok: false; message: string }
-  logout: () => void
-}
-
-const StaffAuthContext = createContext<StaffAuthContextValue | null>(null)
 
 export function StaffAuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(loadSession)
@@ -78,11 +69,5 @@ export function StaffAuthProvider({ children }: { children: ReactNode }) {
     [employee, login, logout],
   )
 
-  return <StaffAuthContext.Provider value={value}>{children}</StaffAuthContext.Provider>
-}
-
-export function useStaffAuth(): StaffAuthContextValue {
-  const ctx = useContext(StaffAuthContext)
-  if (!ctx) throw new Error('useStaffAuth must be used within StaffAuthProvider')
-  return ctx
+  return <MatrixStaffAuthContext.Provider value={value}>{children}</MatrixStaffAuthContext.Provider>
 }

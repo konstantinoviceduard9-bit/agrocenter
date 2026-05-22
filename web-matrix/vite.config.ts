@@ -51,6 +51,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,woff2}'],
         navigateFallback: 'index.html',
+        clientsClaim: true,
+        skipWaiting: true,
       },
     }),
   ],

@@ -2,7 +2,7 @@ import { lazy, Suspense, type ReactNode } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { MatrixLayout } from './components/MatrixLayout'
 import { PageFallback } from './components/PageFallback'
-import { StaffAuthProvider } from './context/StaffAuthContext'
+import { StaffAuthProvider } from './context/StaffAuthProvider'
 
 const TodayPage = lazy(() => import('./pages/TodayPage').then((m) => ({ default: m.TodayPage })))
 const MilkingPage = lazy(() => import('./pages/MilkingPage').then((m) => ({ default: m.MilkingPage })))

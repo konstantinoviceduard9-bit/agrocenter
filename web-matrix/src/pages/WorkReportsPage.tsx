@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { WidgetCard } from '../components/WidgetCard'
 import { PageTitle } from '../components/MatrixLayout'
-import { useStaffAuth } from '../context/StaffAuthContext'
+import { useStaffAuth } from '../hooks/useStaffAuth'
 import { loadActiveVet } from '../data/vetStaff'
 import { hasFullFarmAccess } from '../lib/staffRoleAccess'
 import {

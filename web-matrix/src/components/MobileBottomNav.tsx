@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom'
-import { useStaffAuth } from '../context/StaffAuthContext'
+import { useStaffAuth } from '../hooks/useStaffAuth'
 import { mobileNavForRole, type MobileNavItem } from '../lib/staffRoleAccess'
 
 type Props = {
@@ -80,9 +80,6 @@ export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
   const menuActive =
     !items.some((i) => isItemActive(i.to, i.end)) &&
     !location.pathname.startsWith('/animals') &&
-    !location.pathname.startsWith('/staff') &&
-    !location.pathname.startsWith('/my-tasks') &&
-    !location.pathname.startsWith('/milking') &&
     !location.pathname.startsWith('/login')
 
   const colCount = items.length + 1
