@@ -63,10 +63,10 @@ function NavIcon({ name }: { name: MobileNavItem['icon'] | 'menu' }) {
   }
 }
 
-const tapLinkClass = (active: boolean) =>
+const itemClass = (active: boolean) =>
   [
-    'matrix-bottom-nav-tap w-full text-[10px] font-semibold outline-none',
-    active ? 'text-blue-700' : 'text-slate-600',
+    'matrix-bottom-nav__item flex min-h-[var(--matrix-bottom-nav-row)] flex-col items-center justify-center gap-0.5 px-1 pt-1 pb-0.5 text-[10px] font-semibold leading-tight outline-none touch-manipulation',
+    active ? 'text-blue-700' : 'text-slate-600 active:bg-slate-100',
   ].join(' ')
 
 export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
@@ -83,8 +83,7 @@ export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
     !location.pathname.startsWith('/staff') &&
     !location.pathname.startsWith('/my-tasks') &&
     !location.pathname.startsWith('/milking') &&
-    !location.pathname.startsWith('/login') &&
-    !location.pathname.startsWith('/reports')
+    !location.pathname.startsWith('/login')
 
   const colCount = items.length + 1
 
@@ -93,28 +92,29 @@ export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
   return (
     <nav className="matrix-bottom-nav lg:hidden" aria-label="Быстрая навигация">
       <ul
-        className="grid"
+        className="matrix-bottom-nav__row grid w-full"
         style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}
       >
         {items.map((item) => (
-          <li key={item.to}>
-            <NavLink to={item.to} end={item.end} className={({ isActive }) => tapLinkClass(isActive)}>
+          <li key={item.to} className="min-w-0">
+            <NavLink to={item.to} end={item.end} className={({ isActive }) => itemClass(isActive)}>
               <NavIcon name={item.icon} />
-              <span className="max-w-full truncate leading-tight">{item.label}</span>
+              <span className="max-w-full truncate">{item.label}</span>
             </NavLink>
           </li>
         ))}
-        <li>
+        <li className="min-w-0">
           <button
             type="button"
             onClick={onOpenMenu}
-            className={tapLinkClass(menuActive)}
+            className={[itemClass(menuActive), 'w-full'].join(' ')}
           >
             <NavIcon name="menu" />
             <span>Ещё</span>
           </button>
         </li>
       </ul>
+      <div className="matrix-bottom-nav__safe" aria-hidden />
     </nav>
   )
 }
