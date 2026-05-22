@@ -4,6 +4,7 @@ import { mobileNavForRole, type MobileNavItem } from '../lib/staffRoleAccess'
 
 type Props = {
   onOpenMenu: () => void
+  navOpen?: boolean
 }
 
 function NavIcon({ name }: { name: MobileNavItem['icon'] | 'menu' }) {
@@ -62,7 +63,7 @@ function NavIcon({ name }: { name: MobileNavItem['icon'] | 'menu' }) {
   }
 }
 
-export function MobileBottomNav({ onOpenMenu }: Props) {
+export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
   const location = useLocation()
   const { employee, isLoggedIn } = useStaffAuth()
   const items = mobileNavForRole(employee?.roleId ?? null, isLoggedIn)
@@ -74,9 +75,13 @@ export function MobileBottomNav({ onOpenMenu }: Props) {
     !items.some((i) => isItemActive(i.to, i.end)) &&
     !location.pathname.startsWith('/animals') &&
     !location.pathname.startsWith('/staff') &&
+    !location.pathname.startsWith('/my-tasks') &&
+    !location.pathname.startsWith('/milking') &&
     !location.pathname.startsWith('/login')
 
   const colCount = items.length + 1
+
+  if (navOpen) return null
 
   return (
     <nav
@@ -92,7 +97,7 @@ export function MobileBottomNav({ onOpenMenu }: Props) {
               end={item.end}
               className={({ isActive }) =>
                 [
-                  'flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-semibold outline-none',
+                  'flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 px-0.5 py-2 text-[9px] font-semibold outline-none sm:text-[10px]',
                   isActive ? 'text-blue-700' : 'text-slate-600',
                 ].join(' ')
               }

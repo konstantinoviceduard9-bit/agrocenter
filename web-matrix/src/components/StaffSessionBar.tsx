@@ -2,14 +2,17 @@ import { Link } from 'react-router-dom'
 import { useStaffAuth } from '../context/StaffAuthContext'
 import { roleById } from '../data/staff'
 
-export function StaffSessionBar() {
+export function StaffSessionBar({ compact = false }: { compact?: boolean }) {
   const { employee, isLoggedIn, logout } = useStaffAuth()
 
   if (!isLoggedIn || !employee) {
     return (
       <Link
         to="/login"
-        className="matrix-touch-btn rounded-lg border border-blue-600 bg-blue-700 px-3 font-semibold text-white shadow-sm hover:bg-blue-800"
+        className={[
+          'inline-flex items-center justify-center rounded-lg border border-blue-600 bg-blue-700 font-semibold text-white shadow-sm hover:bg-blue-800',
+          compact ? 'min-h-9 px-2.5 text-xs' : 'matrix-touch-btn px-3',
+        ].join(' ')}
       >
         Войти
       </Link>
@@ -17,6 +20,25 @@ export function StaffSessionBar() {
   }
 
   const role = roleById(employee.roleId)
+
+  if (compact) {
+    return (
+      <div className="flex max-w-[9.5rem] items-center gap-1.5 sm:max-w-none">
+        <div className="min-w-0 text-right">
+          <p className="truncate text-[11px] font-bold leading-tight text-slate-800">{employee.name.split(' ')[0]}</p>
+          <p className={`truncate text-[9px] font-bold ${role.color} rounded-full px-1`}>{role.shortLabel}</p>
+        </div>
+        <button
+          type="button"
+          onClick={logout}
+          className="shrink-0 rounded-md border border-slate-300 bg-white px-2 py-1.5 text-[10px] font-semibold text-slate-700"
+          aria-label="Выйти"
+        >
+          Выйти
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="flex max-w-[14rem] flex-col items-end gap-1 sm:max-w-none sm:flex-row sm:items-center">

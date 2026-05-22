@@ -273,12 +273,12 @@ export function StaffPage() {
       </WidgetCard>
 
       <WidgetCard title="Список сотрудников" className="mt-4">
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="-mx-1 mb-4 flex gap-2 overflow-x-auto px-1 pb-1 [-webkit-overflow-scrolling:touch]">
           <button
             type="button"
             onClick={() => setRoleFilter('all')}
             className={[
-              'matrix-touch-btn rounded-full px-3 py-1 text-xs font-semibold',
+              'matrix-touch-btn shrink-0 rounded-full px-3 py-1 text-xs font-semibold',
               roleFilter === 'all' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-700',
             ].join(' ')}
           >
@@ -290,7 +290,7 @@ export function StaffPage() {
               type="button"
               onClick={() => setRoleFilter(r.id)}
               className={[
-                'matrix-touch-btn rounded-full px-3 py-1 text-xs font-semibold',
+                'matrix-touch-btn shrink-0 rounded-full px-3 py-1 text-xs font-semibold',
                 roleFilter === r.id ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-700',
               ].join(' ')}
             >

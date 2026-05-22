@@ -3,7 +3,7 @@ import { MATRIX_COPY } from '../lib/appCopy'
 export function DataStrip() {
   return (
     <div
-      className="border-b border-amber-200/90 bg-amber-50 px-4 py-2 text-xs leading-relaxed text-amber-950"
+      className="border-b border-amber-200/90 bg-amber-50 px-3 py-1.5 text-[11px] leading-snug text-amber-950 sm:px-4 sm:py-2 sm:text-xs"
       role="status"
     >
       <span className="font-semibold uppercase tracking-wide text-amber-800/90">Демо</span>

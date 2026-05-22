@@ -15,7 +15,7 @@ export function WidgetCard({ title, icon, className = '', children, footer }: Pr
     >
       <header className="flex shrink-0 items-center gap-2 border-b border-blue-800/20 bg-gradient-to-r from-blue-700 to-blue-600 px-3 py-2 text-white">
         {icon ? <span className="opacity-90">{icon}</span> : null}
-        <h2 className="text-sm font-semibold tracking-tight">{title}</h2>
+        <h2 className="min-w-0 truncate text-sm font-semibold tracking-tight">{title}</h2>
       </header>
       <div className="min-h-0 flex-1 p-3 text-sm text-slate-800">{children}</div>
       {footer ? (

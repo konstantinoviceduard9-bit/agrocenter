@@ -10,9 +10,8 @@ export function SyncStatusStrip() {
     )
   }
   return (
-    <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950">
-      <strong>Демо без сервера:</strong> уведомления по ролям работают на <strong>одном устройстве</strong>. Для автоматической
-      доставки ПК ↔ телефон подключите Supabase — см. <code className="text-[10px]">docs/neral-matrix-sync-supabase.md</code>
+    <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-snug text-amber-950 sm:text-xs">
+      <strong>Демо:</strong> задачи и уведомления сохраняются в этом браузере. Для показа — один телефон или ссылки; сервер позже.
     </p>
   )
 }

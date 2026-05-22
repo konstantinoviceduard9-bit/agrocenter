@@ -7,6 +7,7 @@
 
   body {
     margin: 0;
+    overflow-x: hidden;
     font-family:
       "Inter",
       system-ui,
@@ -33,7 +34,15 @@ body,
 @layer components {
   /* Отступ под нижнюю панель на телефоне */
   .matrix-safe-bottom {
-    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .matrix-dialog-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .matrix-login-main {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   }
 
   @media (min-width: 1024px) {

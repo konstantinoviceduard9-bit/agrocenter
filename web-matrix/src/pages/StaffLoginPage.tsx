@@ -27,7 +27,7 @@ export function StaffLoginPage() {
   const demoUsers = staffMembers.filter((m) => m.active && m.hasAppAccess)
 
   return (
-    <div className="mx-auto flex min-h-[70dvh] max-w-md flex-col justify-center px-2 py-6">
+    <div className="mx-auto flex min-h-[60dvh] w-full min-w-0 max-w-md flex-col justify-center px-1 py-4 sm:px-2 sm:py-6">
       <PwaInstallHint />
 
       <h1 className="mt-4 text-xl font-bold text-slate-900">Вход сотрудника</h1>
@@ -72,8 +72,10 @@ export function StaffLoginPage() {
                 onClick={() => tryLogin(m.pin, m.id)}
                 className="matrix-touch-btn w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-left shadow-sm hover:border-blue-300 hover:bg-blue-50"
               >
-                <span className="font-semibold text-slate-900">{m.name}</span>
-                <span className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold ${role.color}`}>{role.label}</span>
+                <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="font-semibold text-slate-900">{m.name}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${role.color}`}>{role.label}</span>
+                </span>
                 <span className="mt-1 block font-mono text-xs text-slate-500">PIN {m.pin}</span>
               </button>
             </li>
