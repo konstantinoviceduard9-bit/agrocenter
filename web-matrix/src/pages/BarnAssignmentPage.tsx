@@ -393,7 +393,7 @@ export function BarnAssignmentPage() {
           <p className="mt-2 text-xs text-emerald-800">
             Передача зафиксирована: {handover.handedBy} → {handover.receivedBy} · {handover.confirmedAt}
             {' · '}
-            <Link to="/reports" className="font-medium text-blue-800 hover:underline">
+            <Link to="/staff#reports" className="font-medium text-blue-800 hover:underline">
               в отчётах
             </Link>
           </p>

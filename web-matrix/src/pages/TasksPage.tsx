@@ -16,8 +16,8 @@ export function TasksPage() {
       </WidgetCard>
 
       <p className="mt-3 text-xs text-slate-600">
-        <Link to="/reports" className="font-medium text-blue-700 hover:underline">
-          Отчёты по выполненным работам
+        <Link to="/staff#reports" className="font-medium text-blue-700 hover:underline">
+          Отчёты по работам
         </Link>
         {' · '}
         Все задачи также доступны из сводки:{' '}

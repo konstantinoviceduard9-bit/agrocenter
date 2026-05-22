@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { ManagerNotificationsPanel } from '../components/ManagerNotificationsPanel'
+import { WorkReportsPanel } from '../components/WorkReportsPanel'
 import { SyncStatusStrip } from '../components/SyncStatusStrip'
 import { TaskShareBanner } from '../components/TaskShareBanner'
 import { WidgetCard } from '../components/WidgetCard'
@@ -123,6 +124,7 @@ export function StaffPage() {
   const [sharePayload, setSharePayload] = useState<TaskSharePayload | null>(null)
   const [completionImported, setCompletionImported] = useState<string | null>(null)
   const [searchParams] = useSearchParams()
+  const location = useLocation()
   const navigate = useNavigate()
 
   const refreshFromCloud = async () => {
@@ -167,6 +169,13 @@ export function StaffPage() {
     navigate('/staff', { replace: true })
   }, [searchParams, navigate])
 
+  useEffect(() => {
+    if (location.hash !== '#reports') return
+    requestAnimationFrame(() => {
+      document.getElementById('reports')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }, [location.hash, location.pathname])
+
   const filtered = useMemo(() => {
     if (roleFilter === 'all') return staffMembers
     return staffMembers.filter((m) => m.roleId === roleFilter)
@@ -210,8 +219,8 @@ export function StaffPage() {
   return (
     <>
       <PageTitle
-        title="Сотрудники и роли"
-        subtitle="Реестр персонала фермы: доярки, ветеринары, водители и др. Руководство назначает задачи — в мобильном приложении сотрудник увидит только свои (следующий этап)."
+        title="Сотрудники и отчёты"
+        subtitle="Персонал, назначения от руководства, уведомления и журнал выполненных работ на смене."
       />
 
       <SyncStatusStrip />
@@ -228,11 +237,6 @@ export function StaffPage() {
 
       <WidgetCard title="Уведомления руководству" className="mb-4">
         <ManagerNotificationsPanel />
-        <p className="mt-3 text-xs text-slate-600">
-          <Link to="/reports" className="font-medium text-blue-700 hover:underline">
-            Журнал отчётов по выполненным работам →
-          </Link>
-        </p>
       </WidgetCard>
 
       <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">
@@ -309,6 +313,8 @@ export function StaffPage() {
           ))}
         </ul>
       </WidgetCard>
+
+      <WorkReportsPanel embedded />
 
       <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
         <strong>Демо-вход:</strong> PIN <code className="font-mono">1</code> у всех — на странице входа выберите сотрудника из списка.{' '}
