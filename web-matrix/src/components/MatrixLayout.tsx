@@ -120,7 +120,7 @@ export function MatrixLayout() {
             'matrix-safe-top fixed inset-y-0 left-0 z-[50] flex w-[min(20rem,92vw)] flex-col border-r border-slate-300 bg-[#f4f5f7] shadow-xl transition-transform lg:static lg:z-0 lg:w-60 lg:shrink-0 lg:translate-x-0 lg:shadow-none',
             isLoginPage ? 'hidden' : navOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           ].join(' ')}
-          style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+          style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom, 1.25rem))' }}
         >
           <div className="border-b border-slate-200 bg-white/80 px-3 py-3 lg:py-4">
             <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Раздел</p>

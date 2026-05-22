@@ -32,10 +32,49 @@ body,
 }
 
 @layer components {
-  /* Отступ под нижнюю панель (иконка + подпись + safe-area на iPhone) */
+  /*
+   * Нижняя панель: высота ряда + запас над «полоской Home» на iPhone.
+   * max(..., 20px) — если env() в PWA/Safari = 0, всё равно есть отступ.
+   */
+  :root {
+    --matrix-nav-row: 3.75rem;
+    --matrix-nav-safe: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+    --matrix-bottom-nav-total: calc(var(--matrix-nav-row) + var(--matrix-nav-safe));
+  }
+
+  .matrix-bottom-nav {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 30;
+    border-top: 1px solid rgb(203 213 225);
+    background: rgb(255 255 255 / 0.97);
+    box-shadow: 0 -4px 20px rgb(0 0 0 / 0.08);
+    backdrop-filter: blur(12px);
+    padding-bottom: var(--matrix-nav-safe);
+  }
+
+  @media (min-width: 1024px) {
+    .matrix-bottom-nav {
+      display: none;
+    }
+  }
+
+  .matrix-bottom-nav-tap {
+    display: flex;
+    min-height: var(--matrix-nav-row);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.125rem;
+    padding: 0.375rem 0.25rem 0.5rem;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   .matrix-safe-bottom {
-    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
-    scroll-padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--matrix-bottom-nav-total);
+    scroll-padding-bottom: var(--matrix-bottom-nav-total);
   }
 
   .matrix-dialog-safe {

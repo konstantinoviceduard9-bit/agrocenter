@@ -8,7 +8,7 @@ type Props = {
 }
 
 function NavIcon({ name }: { name: MobileNavItem['icon'] | 'menu' }) {
-  const cls = 'h-6 w-6'
+  const cls = 'h-6 w-6 shrink-0'
   switch (name) {
     case 'today':
       return (
@@ -63,6 +63,12 @@ function NavIcon({ name }: { name: MobileNavItem['icon'] | 'menu' }) {
   }
 }
 
+const tapLinkClass = (active: boolean) =>
+  [
+    'matrix-bottom-nav-tap w-full text-[10px] font-semibold outline-none',
+    active ? 'text-blue-700' : 'text-slate-600',
+  ].join(' ')
+
 export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
   const location = useLocation()
   const { employee, isLoggedIn } = useStaffAuth()
@@ -77,34 +83,22 @@ export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
     !location.pathname.startsWith('/staff') &&
     !location.pathname.startsWith('/my-tasks') &&
     !location.pathname.startsWith('/milking') &&
-    !location.pathname.startsWith('/login')
+    !location.pathname.startsWith('/login') &&
+    !location.pathname.startsWith('/reports')
 
   const colCount = items.length + 1
 
   if (navOpen) return null
 
   return (
-    <nav
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-300 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md lg:hidden"
-      style={{ paddingBottom: 'max(0.25rem, env(safe-area-inset-bottom, 0px))' }}
-      aria-label="Быстрая навигация"
-    >
+    <nav className="matrix-bottom-nav lg:hidden" aria-label="Быстрая навигация">
       <ul
-        className="grid min-h-[3.5rem]"
+        className="grid"
         style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}
       >
         {items.map((item) => (
           <li key={item.to}>
-            <NavLink
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                [
-                  'flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 px-0.5 py-2 text-[9px] font-semibold outline-none sm:text-[10px]',
-                  isActive ? 'text-blue-700' : 'text-slate-600',
-                ].join(' ')
-              }
-            >
+            <NavLink to={item.to} end={item.end} className={({ isActive }) => tapLinkClass(isActive)}>
               <NavIcon name={item.icon} />
               <span className="max-w-full truncate leading-tight">{item.label}</span>
             </NavLink>
@@ -114,10 +108,7 @@ export function MobileBottomNav({ onOpenMenu, navOpen = false }: Props) {
           <button
             type="button"
             onClick={onOpenMenu}
-            className={[
-              'flex min-h-[3.25rem] w-full flex-col items-center justify-center gap-0.5 px-1 py-2 text-[10px] font-semibold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500',
-              menuActive ? 'text-blue-700' : 'text-slate-600',
-            ].join(' ')}
+            className={tapLinkClass(menuActive)}
           >
             <NavIcon name="menu" />
             <span>Ещё</span>
