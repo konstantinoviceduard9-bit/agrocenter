@@ -37,6 +37,7 @@ export function MatrixLayout() {
   const navigate = useNavigate()
   const { employee, isRestricted } = useStaffAuth()
   const [navOpen, setNavOpen] = useState(false)
+  const isLoginPage = location.pathname.startsWith('/login')
   const currentLabel = navLabelForPath(location.pathname)
   const navSections = isRestricted && employee ? navSectionsForRole(employee.roleId) : matrixNavSections
 
@@ -54,20 +55,24 @@ export function MatrixLayout() {
     <div className="flex min-h-dvh flex-col bg-[#e8eaed] text-slate-900">
       <header className="matrix-safe-top shrink-0 border-b border-slate-200 bg-white shadow-sm">
         <div className="flex items-center gap-2 px-3 py-2 sm:gap-3 sm:py-2.5 lg:px-4">
-          <button
-            type="button"
-            className="matrix-touch-btn shrink-0 rounded-lg border border-slate-200 !min-h-10 !min-w-10 !p-2 text-slate-700 hover:bg-slate-50 lg:hidden"
-            aria-expanded={navOpen}
-            aria-controls="matrix-sidebar"
-            onClick={() => setNavOpen((o) => !o)}
-          >
-            <span className="sr-only">Меню</span>
-            <MenuIcon open={navOpen} />
-          </button>
+          {!isLoginPage ? (
+            <button
+              type="button"
+              className="matrix-touch-btn shrink-0 rounded-lg border border-slate-200 !min-h-10 !min-w-10 !p-2 text-slate-700 hover:bg-slate-50 lg:hidden"
+              aria-expanded={navOpen}
+              aria-controls="matrix-sidebar"
+              onClick={() => setNavOpen((o) => !o)}
+            >
+              <span className="sr-only">Меню</span>
+              <MenuIcon open={navOpen} />
+            </button>
+          ) : null}
           <FarmHeaderBrand sectionLabel={currentLabel} />
-          <div className="shrink-0 lg:hidden">
-            <StaffSessionBar compact />
-          </div>
+          {!isLoginPage ? (
+            <div className="shrink-0 lg:hidden">
+              <StaffSessionBar compact />
+            </div>
+          ) : null}
           <div className="hidden shrink-0 items-end gap-2 sm:flex">
             <button
               type="button"
@@ -79,14 +84,14 @@ export function MatrixLayout() {
             <StaffSessionBar />
           </div>
         </div>
-        {employee?.roleId === 'vet' || !isRestricted ? (
+        {!isLoginPage && (employee?.roleId === 'vet' || !isRestricted) ? (
           <div className="border-t border-slate-100 px-3 py-2 lg:hidden">
             <ActiveVetSelect fullWidth />
           </div>
         ) : null}
       </header>
 
-      <DataStrip />
+      {!isLoginPage ? <DataStrip /> : null}
 
       <div className="hidden border-b border-emerald-200/90 bg-gradient-to-r from-emerald-50 to-slate-50 px-4 py-2 text-sm text-slate-800 md:block">
         Финансы группы (выручка, касса, юрлица) — в{' '}
@@ -113,7 +118,7 @@ export function MatrixLayout() {
           id="matrix-sidebar"
           className={[
             'matrix-safe-top fixed inset-y-0 left-0 z-[50] flex w-[min(20rem,92vw)] flex-col border-r border-slate-300 bg-[#f4f5f7] shadow-xl transition-transform lg:static lg:z-0 lg:w-60 lg:shrink-0 lg:translate-x-0 lg:shadow-none',
-            navOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+            isLoginPage ? 'hidden' : navOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           ].join(' ')}
           style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
         >
@@ -159,8 +164,8 @@ export function MatrixLayout() {
         <main
           id="matrix-main"
           className={[
-            'min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-4',
-            location.pathname.startsWith('/login') ? 'matrix-login-main' : 'matrix-safe-bottom',
+            'min-h-0 min-w-0 flex-1 overflow-x-hidden p-3 sm:p-4',
+            isLoginPage ? 'matrix-login-main flex flex-col overflow-hidden' : 'matrix-safe-bottom overflow-y-auto',
           ].join(' ')}
         >
           <Outlet />

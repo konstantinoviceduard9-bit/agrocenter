@@ -15,6 +15,9 @@ const BarnAssignmentPage = lazy(() =>
 const StaffPage = lazy(() => import('./pages/StaffPage').then((m) => ({ default: m.StaffPage })))
 const StaffLoginPage = lazy(() => import('./pages/StaffLoginPage').then((m) => ({ default: m.StaffLoginPage })))
 const MyTasksPage = lazy(() => import('./pages/MyTasksPage').then((m) => ({ default: m.MyTasksPage })))
+const WorkReportsPage = lazy(() =>
+  import('./pages/WorkReportsPage').then((m) => ({ default: m.WorkReportsPage })),
+)
 const CowListPage = lazy(() => import('./pages/CowListPage').then((m) => ({ default: m.CowListPage })))
 const CowDetailPage = lazy(() => import('./pages/CowDetailPage').then((m) => ({ default: m.CowDetailPage })))
 
@@ -100,6 +103,14 @@ export default function App() {
             element={
               <Lazy>
                 <MyTasksPage />
+              </Lazy>
+            }
+          />
+          <Route
+            path="reports"
+            element={
+              <Lazy>
+                <WorkReportsPage />
               </Lazy>
             }
           />

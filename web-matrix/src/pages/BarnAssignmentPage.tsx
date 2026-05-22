@@ -19,6 +19,7 @@ import { cowDetailPath } from '../data/cowDetail'
 import { farmMeta } from '../data/matrixMocks'
 import { saveLastVetHandover, veterinarians } from '../data/vetStaff'
 import { fmtDec, fmtInt } from '../lib/format'
+import { recordBarnHandover } from '../lib/workReports'
 
 type Filter = 'all' | 'pending' | 'done'
 
@@ -231,6 +232,14 @@ export function BarnAssignmentPage() {
     saveHandover(next)
     saveLastVetHandover(handover.handedBy, handover.receivedBy)
     setState((s) => ({ ...s, handover: next }))
+    const assignedInGroup = groupAnimals.filter((a) => assignments[a.cowNumber]).length
+    recordBarnHandover(
+      handover.handedBy,
+      handover.receivedBy,
+      next.confirmedAt!,
+      assignedInGroup,
+      group.label,
+    )
   }
 
   const selectClass =
@@ -383,6 +392,10 @@ export function BarnAssignmentPage() {
         {handover.confirmedAt ? (
           <p className="mt-2 text-xs text-emerald-800">
             Передача зафиксирована: {handover.handedBy} → {handover.receivedBy} · {handover.confirmedAt}
+            {' · '}
+            <Link to="/reports" className="font-medium text-blue-800 hover:underline">
+              в отчётах
+            </Link>
           </p>
         ) : pendingCount > 0 ? (
           <p className="mt-2 text-xs text-amber-800">Назначьте коровник всем животным в списке перед подтверждением.</p>

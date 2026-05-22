@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { cowDetailPath } from '../data/cowDetail'
+import { loadActiveVet } from '../data/vetStaff'
 import {
   loadTaskStatus,
   saveTaskStatus,
@@ -8,6 +9,7 @@ import {
   type VetTask,
   type VetTaskStatus,
 } from '../data/vetTasks'
+import { recordVetTaskDone } from '../lib/workReports'
 
 const statusLabel: Record<VetTaskStatus, string> = {
   open: 'Открыта',
@@ -34,8 +36,18 @@ function TaskRow({ task }: { task: VetTask }) {
   }, [task.id, task.status])
 
   const setStatusAndSave = (next: VetTaskStatus) => {
+    const prev = status
     setStatus(next)
     saveTaskStatus(task.id, next)
+    if (next === 'done' && prev !== 'done') {
+      recordVetTaskDone(
+        task.id,
+        `${task.barn} · №${task.cow}`,
+        task.issue,
+        loadActiveVet(),
+        new Date().toLocaleString('ru-RU'),
+      )
+    }
   }
 
   const detailTo = cowDetailPath(task.categoryId, task.cow)

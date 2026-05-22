@@ -228,6 +228,11 @@ export function StaffPage() {
 
       <WidgetCard title="Уведомления руководству" className="mb-4">
         <ManagerNotificationsPanel />
+        <p className="mt-3 text-xs text-slate-600">
+          <Link to="/reports" className="font-medium text-blue-700 hover:underline">
+            Журнал отчётов по выполненным работам →
+          </Link>
+        </p>
       </WidgetCard>
 
       <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50/90 px-4 py-3 text-sm text-amber-950">

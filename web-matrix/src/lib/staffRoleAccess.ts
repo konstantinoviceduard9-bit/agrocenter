@@ -2,13 +2,13 @@ import type { StaffRoleId } from '../data/staff'
 
 /** Префиксы маршрутов, доступных роли (полный доступ: manager, admin). */
 const accessByRole: Record<StaffRoleId, string[] | '*'> = {
-  milker: ['/', '/milking', '/my-tasks', '/animals'],
-  vet: ['/', '/tasks', '/barn-assignment', '/feeding', '/my-tasks', '/animals'],
-  driver: ['/', '/machines', '/my-tasks'],
-  zootech: ['/', '/feeding', '/my-tasks'],
-  agronomist: ['/', '/feeding', '/my-tasks'],
-  mechanic: ['/', '/machines', '/my-tasks'],
-  security: ['/', '/my-tasks'],
+  milker: ['/', '/milking', '/my-tasks', '/reports', '/animals'],
+  vet: ['/', '/tasks', '/barn-assignment', '/feeding', '/my-tasks', '/reports', '/animals'],
+  driver: ['/', '/machines', '/my-tasks', '/reports'],
+  zootech: ['/', '/feeding', '/my-tasks', '/reports'],
+  agronomist: ['/', '/feeding', '/my-tasks', '/reports'],
+  mechanic: ['/', '/machines', '/my-tasks', '/reports'],
+  security: ['/', '/my-tasks', '/reports'],
   manager: '*',
   admin: '*',
 }

@@ -29,6 +29,7 @@ import {
   tryShowRoleNotification,
   type CompletionSharePayload,
 } from '../lib/managerNotifications'
+import { recordLeadershipTaskDone } from '../lib/workReports'
 
 type TaskStatus = LeadershipTask['status']
 
@@ -142,6 +143,8 @@ export function MyTasksPage() {
     if (!confirmTask || !employee) return
     const doneTask = applyStatus(confirmTask.id, 'done')
     if (doneTask) {
+      const completedAt = new Date().toLocaleString('ru-RU')
+      recordLeadershipTaskDone(doneTask, employee.name, completedAt)
       const notes = notifyTaskCompleted(doneTask, employee.name)
       for (const note of notes) {
         if (employee && viewerSeesNotification(note, employee)) void tryShowRoleNotification(note)
@@ -153,7 +156,7 @@ export function MyTasksPage() {
           employeeName: employee.name,
           taskTitle: doneTask.title,
           assignedBy: doneTask.assignedBy,
-          completedAt: new Date().toLocaleString('ru-RU'),
+          completedAt,
         })
       } else {
         setCompletionShare(null)
@@ -268,6 +271,11 @@ export function MyTasksPage() {
           </Link>
         </p>
       ) : null}
+      <p className="mt-4 text-xs text-slate-600">
+        <Link to="/reports" className="font-medium text-blue-700 hover:underline">
+          Отчёты по проделанным работам →
+        </Link>
+      </p>
     </>
   )
 }

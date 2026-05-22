@@ -48,6 +48,7 @@ export const matrixNavSections: MatrixNavSection[] = [
     heading: 'Персонал',
     links: [
       { to: '/staff', label: 'Сотрудники и роли', hint: 'Доярки, ветеринары, задачи от руководства' },
+      { to: '/reports', label: 'Отчёты по работам', hint: 'Выполненные задачи, вет, передачи по коровникам' },
     ],
   },
   {
@@ -73,6 +74,7 @@ export function navSectionsForRole(roleId: StaffRoleId | null): MatrixNavSection
 export function navLabelForPath(pathname: string): string {
   if (pathname === '/login') return 'Вход'
   if (pathname.startsWith('/my-tasks')) return 'Мои задачи'
+  if (pathname.startsWith('/reports')) return 'Отчёты по работам'
   if (pathname.startsWith('/animals/')) return 'Карточка животного'
   const exact = flatLinks.find((l) => (l.end ? pathname === l.to || pathname === `${l.to}/` : pathname === l.to || pathname.startsWith(`${l.to}/`)))
   if (exact) return exact.label
