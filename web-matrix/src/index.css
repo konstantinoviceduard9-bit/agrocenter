@@ -3,19 +3,25 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* Android Chrome: стабильная высота экрана (адресная строка) */
+    min-height: 100%;
+    min-height: 100dvh;
   }
 
   body {
     margin: 0;
     overflow-x: hidden;
+    min-height: 100%;
+    min-height: 100dvh;
     font-family:
       "Inter",
+      Roboto,
       system-ui,
       -apple-system,
       "Segoe UI",
-      Roboto,
       sans-serif;
     @apply antialiased text-slate-900;
+    -webkit-tap-highlight-color: rgb(59 130 246 / 0.15);
   }
 
   :where(a, button, input, select):focus-visible {
@@ -27,15 +33,20 @@ html,
 body,
 #root {
   min-height: 100%;
+  min-height: 100dvh;
   height: 100%;
   margin: 0;
 }
 
 @layer components {
   :root {
-    /* Высота ряда иконок + зона под home indicator (iPhone) */
-    --matrix-bottom-nav-row: 4rem;
-    --matrix-bottom-nav-safe: max(1.25rem, env(safe-area-inset-bottom, 0px));
+    /*
+     * Нижняя панель: Android (жесты / 3 кнопки) + iPhone (home indicator).
+     * В Chrome на Android safe-area часто 0 — даём минимум 48px под системную полосу.
+     */
+    --matrix-bottom-nav-row: 3.5rem;
+    --matrix-system-bar-bottom: max(3rem, env(safe-area-inset-bottom, 0px));
+    --matrix-bottom-nav-safe: var(--matrix-system-bar-bottom);
     --matrix-bottom-nav-total: calc(var(--matrix-bottom-nav-row) + var(--matrix-bottom-nav-safe));
   }
 
@@ -46,18 +57,28 @@ body,
     z-index: 30;
     display: flex;
     flex-direction: column;
+    padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
     border-top: 1px solid rgb(203 213 225);
     background: rgb(255 255 255 / 0.97);
     box-shadow: 0 -4px 20px rgb(0 0 0 / 0.08);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    touch-action: manipulation;
   }
 
   .matrix-bottom-nav__row {
     min-height: var(--matrix-bottom-nav-row);
   }
 
-  /* Пустая полоса под кнопками — иконки не попадают под home indicator */
+  /* Кнопки панели — не ниже 48px (Material / удобный палец на Android) */
+  .matrix-bottom-nav__item {
+    min-height: var(--matrix-bottom-nav-row);
+    min-width: 3rem;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Полоса под кнопками: жесты Android / home indicator iOS */
   .matrix-bottom-nav__safe {
     flex-shrink: 0;
     height: var(--matrix-bottom-nav-safe);
@@ -71,11 +92,12 @@ body,
   }
 
   .matrix-dialog-safe {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--matrix-system-bar-bottom);
   }
 
   .matrix-login-main {
-    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--matrix-system-bar-bottom);
+    min-height: 0;
     height: 100%;
   }
 
@@ -119,12 +141,13 @@ body,
     }
   }
 
-  /* Кнопки и поля — удобный размер пальца (≈44px) */
+  /* Кнопки и поля — 48px на телефоне (Android Material, iOS HIG) */
   .matrix-touch-btn {
-    min-height: 2.75rem;
+    min-height: 3rem;
     padding: 0.625rem 1rem;
     font-size: 0.9375rem;
     line-height: 1.25;
+    touch-action: manipulation;
   }
 
   @media (min-width: 640px) {
@@ -137,8 +160,8 @@ body,
 
   .matrix-touch-input,
   .matrix-touch-input select {
-    min-height: 2.75rem;
-    font-size: 1rem;
+    min-height: 3rem;
+    font-size: 16px; /* без зума при фокусе в Chrome Android */
   }
 
   @media (min-width: 640px) {
@@ -152,6 +175,18 @@ body,
     min-height: 3rem;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
+  }
+
+  .matrix-sidebar-nav {
+    padding-bottom: max(1.5rem, var(--matrix-system-bar-bottom));
+  }
+
+  @media (max-width: 1023px) {
+    .matrix-safe-bottom {
+      /* Чуть больше зазор на узких Android-экранах */
+      padding-bottom: calc(var(--matrix-bottom-nav-total) + 1rem);
+      scroll-padding-bottom: calc(var(--matrix-bottom-nav-total) + 1rem);
+    }
   }
 }
 

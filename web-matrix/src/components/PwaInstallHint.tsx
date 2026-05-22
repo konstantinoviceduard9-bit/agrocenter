@@ -27,9 +27,9 @@ export function PwaInstallHint({ compact = false }: { compact?: boolean }) {
       <p className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-950">
         <strong>На экран «Домой»:</strong>{' '}
         {isIos() ? (
-          <>«Поделиться» → «На экран Домой»</>
+          <>Safari → «Поделиться» → «На экран Домой»</>
         ) : (
-          <>меню браузера → «Установить приложение» или «Добавить на главный экран»</>
+          <>Chrome → ⋮ → «Установить приложение» (удобнее, чем вкладка в браузере)</>
         )}
       </p>
     )

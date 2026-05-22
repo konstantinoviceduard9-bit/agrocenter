@@ -65,7 +65,7 @@ function NavIcon({ name }: { name: MobileNavItem['icon'] | 'menu' }) {
 
 const itemClass = (active: boolean) =>
   [
-    'matrix-bottom-nav__item flex min-h-[var(--matrix-bottom-nav-row)] flex-col items-center justify-center gap-0.5 px-1 pt-1 pb-0.5 text-[10px] font-semibold leading-tight outline-none touch-manipulation',
+    'matrix-bottom-nav__item flex flex-col items-center justify-center gap-0.5 px-1 py-1 text-[11px] font-semibold leading-tight outline-none',
     active ? 'text-blue-700' : 'text-slate-600 active:bg-slate-100',
   ].join(' ')
 

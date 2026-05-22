@@ -128,8 +128,7 @@ export function MatrixLayout() {
           </div>
 
           <nav
-            className="flex-1 overflow-y-auto p-2 pb-6 text-sm"
-            style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))' }}
+            className="matrix-sidebar-nav flex-1 overflow-y-auto p-2 pb-6 text-sm"
             aria-label="Навигация по пульту"
           >
             {navSections.map((sec) => (
