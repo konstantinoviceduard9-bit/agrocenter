@@ -1,0 +1,17 @@
+---
+description: Визуальный автопилот — палитра, графики, кнопки, motion. После роли A выполнить роль V из AGENTS.md (chartPalette, surface-card, btn-ghost, prefers-reduced-motion), затем npm run check в web/.
+alwaysApply: false
+---
+
+# Визуальный агент
+
+Полный чеклист: **`AGENTS.md` → раздел «Роль V — Визуал / полировка»**.
+
+**Якоря в коде**
+
+- `web/src/lib/chartPalette.ts` — цвета Recharts (как в exec-deck).
+- `web/src/components/BrandWordmark.tsx` — оформление «Нерал · дашборд» (светлая / тёмная тема, ссылка на главную).
+- `web/src/index.css` — `surface-card`, `btn-ghost`, reduced motion для lift и глобальный `focus-visible`.
+- Презентации для тона (не копировать HTML целиком): `docs/presentation-neral-exec-ai-dashboard.html`, `docs/presentation-neral-product-sales.html`.
+
+**Порядок:** `cd web && npm run check` в конце. Не ломать GitHub Pages и basename.

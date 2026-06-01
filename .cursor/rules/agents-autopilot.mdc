@@ -1,0 +1,19 @@
+---
+description: При запросах «автопилот», «все проверь», «улучши весь дашборд» — следовать корневому AGENTS.md в порядке ролей A→V→B→C (или A→V только для визуала) и завершать `cd web && npm run check`.
+alwaysApply: false
+---
+
+# Агенты репозитория
+
+Полная инструкция: **`AGENTS.md`** в корне репозитория.
+
+Кратко:
+
+1. **Роль A (QA)** — `npm run check` в `web/`.
+2. **Роль V (Визуал)** — палитра, `chartPalette.ts`, `btn-ghost`, motion-safe / reduced-motion.
+3. **Роль B (UI)** — мобилка, `PageShell`/крошки, `surface-card`, таблицы.
+4. **Роль C (копирайт)** — `appCopy.ts`, презентации в `docs/`.
+
+Не ломать GitHub Pages (`VITE_BASE_PATH`, basename, опциональный JSON-снимок).
+
+Подробнее про визуал: правило **`agents-visual`**.
